@@ -266,17 +266,23 @@
 		});
 		
 		function convertPayload(buffer){
-			len = buffer.byteLength;
-			while(len % 4 != 0) {
-				len++;
+			var off = buffer.byteLength % 4;
+			if(off != 0) {
+			var len = buffer.byteLength + (4 - off);
+				var tmp = new ArrayBuffer(len);
+				
+				var source = new Uint8Array(buffer);
+				var dest = new Uint8Array(tmp);
+				dest.set(source);
+				
+				buffer = tmp;
 			}
-			data = new DataView(buffer,0,len);
-			console.log(len);
+			var data = new DataView(buffer);
 			var arr = [];
 			for(i = 0; i < len; i+= 4) {
 				val = data.getUint32(i, true);
 				if(val != 0) {
-					arr.push("0x" + val.toString(16).toUpperCase());
+					arr.push("0x" + ("00000000" + val.toString(16).toUpperCase()).substr(-8));
 				}else{
 					arr.push("0");
 				}
@@ -284,7 +290,6 @@
 			var out = "var payload = [" + arr.toString() + "];";
 			$("#output").val(out);
 			$("#download").prop("disabled", false);
-//			console.log("Converting...");
 		}
 	</script>
 	
