@@ -3,7 +3,7 @@
 <head lang="en">
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <meta name="viewport" content="width=device-width"/>
-    <title>OOT Quest Screen Code Generator</title>
+    <title>PS4 Payload Hombrewfier</title>
     <style type="text/css">
 	
         body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
@@ -235,50 +235,52 @@
         }
     </style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="./js/FileSaver.js"></script>
 	<script type="text/javascript">
 	
-		var base_address = 0x80000000;
-		var write_32_int_codetype = 0x04000000;
-		var region_addresses = {U:0x8107EE44, J:0x80F8ED24, P:0x80F8C754};
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			convertPayload(reader.result);
+		}
 	
-		function updateForm(region){
-			prefix = region_addresses[region];
-			
-			//subtrack the base address
-			prefix -= base_address;
-			//add in the codetype
-			prefix += write_32_int_codetype;
-			
-			suffix = 0;
-			
-			bits = getBits();
-			
-			for(var i = 0; i < bits.length;i++) {
-				suffix |= 1 << bits[i];
-			}
-			
-			$("#out").val(intToString(prefix, 8) + " " + intToString(suffix, 8));
-		}
-		
-		function getBits(){
-			var val = [];
-			$(':checkbox:checked').each(function(i){
-				val[i] = $(this).val();
+		$(function() {
+			$("#payload").change(function(event){
+				$("#convert").prop("disabled", event.target.files.length == 0)
 			});
-			return val;
-		}
-		
-		function intToString(value, padding){
-			res = value.toString(16);
-			while(res.length < padding) {
-				res = "0" + res;
-			}
-			return res.toUpperCase();
-		}
-		
-		$(document).ready(function() {
-			updateForm('U');
+			
+			$("#download").click(function(event){
+				event.preventDefault();
+				blob = new Blob([$("#output").val()], {type: "text/plain;charset=utf-8"});
+				saveAs(blob, "homebrew.js");
+			});
+			
+			$("#target").submit(function(event){
+				event.preventDefault();
+				reader.readAsArrayBuffer($("#payload").get(0).files[0]);
+			});
 		});
+		
+		function convertPayload(buffer){
+			len = buffer.byteLength;
+			while(len % 4 != 0) {
+				len++;
+			}
+			data = new DataView(buffer,0,len);
+			console.log(len);
+			var arr = [];
+			for(i = 0; i < len; i+= 4) {
+				val = data.getUint32(i, true);
+				if(val != 0) {
+					arr.push("0x" + val.toString(16).toUpperCase());
+				}else{
+					arr.push("0");
+				}
+			}
+			var out = "var payload = [" + arr.toString() + "];";
+			$("#output").val(out);
+			$("#download").prop("disabled", false);
+//			console.log("Converting...");
+		}
 	</script>
 	
 	<style type="text/css">
@@ -296,63 +298,20 @@
 	</head>
 
 <body>
-<h1>OOT Quest Screen Code Generator</h1>
+<h1>PS4 Payload Hombrewfier</h1>
     <section id="main">
 		<p>
-			Select your game's region and what you would like unlocked. Please note that the gold skulluta counter only unlocks the counter, it does NOT give you any of the tokens
+			Upload a payload and click generate to convert it to homebrew.js format
 		</p>
-		<form action="#" oninput="updateForm(region.value)">
-			<h2>Region</h2>
-			<select name="region">
-				<option value="U">NTSC-U (North America)</option>
-				<option value="P">PAL (Europe & Australia)</option>
-				<option value="J">NTSC-J (Japan)</option>
-			</select>
-			<br />
-			<div class="ib">
-			<h2>Medallions</h2>
-			<label>Forest</label> <input type="checkbox" value="0" onchange="updateForm(region.value)"/> <br />
-			<label>Fire</label> <input type="checkbox" value="1" onchange="updateForm(region.value)"/> <br />
-			<label>Water</label> <input type="checkbox" value="2" onchange="updateForm(region.value)"/> <br />
-			<label>Spirit</label> <input type="checkbox" value="3" onchange="updateForm(region.value)"/> <br />
-			<label>Shadow</label> <input type="checkbox" value="4" onchange="updateForm(region.value)"/> <br />
-			<label>Light</label> <input type="checkbox" value="5" onchange="updateForm(region.value)"/> <br />
-			</div>
+		<form action="#" id="target">
+			<label for="payload">Payload:</label><input type="file" id="payload" name="payload"> <br />
+			<input type="submit" id="convert" name="convert" value="Convert" disabled="disabled"/>
 			
-			<div  class="ib">
-			<h2>Regular Songs</h2>
-			<label>Zelda's Lullaby</label> <input type="checkbox" value="12" onchange="updateForm(region.value)"/> <br />
-			<label>Epona's Song</label> <input type="checkbox" value="13" onchange="updateForm(region.value)"/> <br />
-			<label>Saria's Song</label> <input type="checkbox" value="14" onchange="updateForm(region.value)"/> <br />
-			<label>Sun's Song</label> <input type="checkbox" value="15" onchange="updateForm(region.value)"/> <br />
-			<label>Song of Time</label> <input type="checkbox" value="16" onchange="updateForm(region.value)"/> <br />
-			<label>Song of Storms</label> <input type="checkbox" value="17" onchange="updateForm(region.value)"/> <br />
-			</div>
-			<div  class="ib">
-			<h2>Temple Songs</h2>
-			<label>Minuet of Forest</label> <input type="checkbox" value="6" onchange="updateForm(region.value)"/> <br />
-			<label>Bolero of Fire</label> <input type="checkbox" value="7" onchange="updateForm(region.value)"/> <br />
-			<label>Serenade of Water</label> <input type="checkbox" value="8" onchange="updateForm(region.value)"/> <br />
-			<label>Requiem of Spirit</label> <input type="checkbox" value="9" onchange="updateForm(region.value)"/> <br />
-			<label>Nocturne of Shadow</label> <input type="checkbox" value="10" onchange="updateForm(region.value)"/> <br />
-			<label>Prelude of Light</label> <input type="checkbox" value="11" onchange="updateForm(region.value)"/> <br />
-			</div>
-			<div  class="ib">
-			<h2>Stones</h2>
-			<label>Kokiri's Emerald</label> <input type="checkbox" value="18" onchange="updateForm(region.value)"/> <br />
-			<label>Goron's Ruby</label> <input type="checkbox" value="19" onchange="updateForm(region.value)"/> <br />
-			<label>Zora's Sapphire</label> <input type="checkbox" value="20" onchange="updateForm(region.value)"/> <br />
-			</div>
+			<hr />
 			
-			
-			<div  class="ib">
-			<h2>Misc.</h2>
-			<label>Stone of Agony</label> <input type="checkbox" value="21" onchange="updateForm(region.value)"/> <br />
-			<label>Gerudo's Card</label> <input type="checkbox" value="22" onchange="updateForm(region.value)"/> <br />
-			<label>Gold Skulluta Counter</label> <input type="checkbox" value="23" onchange="updateForm(region.value)"/>
-			</div>
-			<h2>Output</h2>
-			<input type="text" name="out" id="out" size="17" disabled="disabled"></input>
+			<label for="output">Output:</label> <br />
+			<textarea id="output" name="output" rows="10" cols="100" disabled="disabled"></textarea>
+			<button disabled="disabled" name="download" id="download">Download as homebrew.js</button>
 		</form>
     </section>	
 </body>
