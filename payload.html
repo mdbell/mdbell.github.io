@@ -279,7 +279,7 @@
 			}
 			var data = new DataView(buffer);
 			var arr = [];
-			for(i = 0; i < len; i+= 4) {
+			for(i = 0; i < buffer.byteLength; i+= 4) {
 				val = data.getUint32(i, true);
 				if(val != 0) {
 					arr.push("0x" + ("00000000" + val.toString(16).toUpperCase()).substr(-8));
