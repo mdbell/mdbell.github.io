@@ -237,6 +237,8 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="./js/FileSaver.js"></script>
 	<script type="text/javascript">
+		//TODO: set this to whatever the max length is supposed to be
+		var max_len = 70000;
 	
 		var reader = new FileReader();
 		reader.onload = function(e) {
@@ -245,18 +247,21 @@
 	
 		$(function() {
 			$("#payload").change(function(event){
-				$("#convert").prop("disabled", event.target.files.length == 0)
+				files = event.target.files;
+				if(files.length > 0) {
+					file = files[0];
+					if(file.size > max_len) {
+						alert("That payload is too big! The max size is " + max_len + " bytes");
+					}else{
+						reader.readAsArrayBuffer(file);
+					}
+				}
 			});
 			
 			$("#download").click(function(event){
 				event.preventDefault();
 				blob = new Blob([$("#output").val()], {type: "text/plain;charset=utf-8"});
 				saveAs(blob, "homebrew.js");
-			});
-			
-			$("#target").submit(function(event){
-				event.preventDefault();
-				reader.readAsArrayBuffer($("#payload").get(0).files[0]);
 			});
 		});
 		
@@ -301,11 +306,10 @@
 <h1>PS4 Payload Hombrewfier</h1>
     <section id="main">
 		<p>
-			Upload a payload and click generate to convert it to homebrew.js format
+			Upload a payload and it will be converted to homebrew.js format
 		</p>
 		<form action="#" id="target">
 			<label for="payload">Payload:</label><input type="file" id="payload" name="payload"> <br />
-			<input type="submit" id="convert" name="convert" value="Convert" disabled="disabled"/>
 			
 			<hr />
 			
