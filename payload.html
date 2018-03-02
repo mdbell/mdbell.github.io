@@ -263,6 +263,10 @@
 				blob = new Blob([$("#output").val()], {type: "text/plain;charset=utf-8"});
 				saveAs(blob, "homebrew.js");
 			});
+			
+			$("#hex").change(function(event){
+				$("#prefix").prop("disabled", !this.checked);
+			});
 		});
 		
 		function convertPayload(buffer){
@@ -270,26 +274,32 @@
 			if(off != 0) {
 			var len = buffer.byteLength + (4 - off);
 				var tmp = new ArrayBuffer(len);
-				
 				var source = new Uint8Array(buffer);
 				var dest = new Uint8Array(tmp);
 				dest.set(source);
 				
 				buffer = tmp;
 			}
+			
+			var toHex = $("#prefix").prop("checked") ? paddedIntToHexString : intToHexString;
+			
+			var hex = $("#hex").prop("checked");
+			
 			var data = new DataView(buffer);
 			var arr = [];
 			for(i = 0; i < buffer.byteLength; i+= 4) {
 				val = data.getUint32(i, true);
-				if(val != 0) {
-					arr.push("0x" + ("00000000" + val.toString(16).toUpperCase()).substr(-8));
-				}else{
+				if(!hex) {
+					arr.push(val);
+				}else if(val != 0) {
+					arr.push("0x" + toHex(val));
+				} else{
 					arr.push("0");
 				}
 			}
 			//remove trailing zeros
 			if($("#clean").prop("checked")) {
-				while(arr[arr.length - 1] === "0") {
+				while(arr[arr.length - 1] == "0") {
 					arr.pop();
 				}
 			}
@@ -298,6 +308,14 @@
 			var out = "var payload = [" + arr.toString() + "];";
 			$("#output").val(out);
 			$("#download").prop("disabled", false);
+		}
+		
+		function intToHexString(val){
+			return val.toString(16).toUpperCase();
+		}
+		
+		function paddedIntToHexString(val) {
+			return ("00000000" + intToHexString(val)).substr(-8);
 		}
 	</script>
 	
@@ -322,7 +340,10 @@
 			Upload a payload and it will be converted to homebrew.js format
 		</p>
 		<form action="#" id="target">
-			<label for="payload">Payload:</label><input type="file" id="payload" name="payload"> <input id="clean" name="clean" type="checkbox" checked="checked"><label for="clean">Remove Trailing Zeros</label>
+			<label for="payload">Payload:</label><input type="file" id="payload" name="payload"> <br />
+			
+			<input id="clean" name="clean" type="checkbox" checked="checked"><label for="clean">Remove Trailing Zeros</label> <input id="hex" name="hex" type="checkbox" checked="checked"> <label for="hex">Format Ints As Hex</label>
+			<input id="prefix" name="prefix" type="checkbox" checked="checked"> <label for="prefix">Pad Hex Values</label>
 			
 			<hr />
 			
