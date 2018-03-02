@@ -287,6 +287,14 @@
 					arr.push("0");
 				}
 			}
+			//remove trailing zeros
+			if($("#clean").prop("checked")) {
+				while(arr[arr.length - 1] === "0") {
+					arr.pop();
+				}
+			}
+			
+			//show our output
 			var out = "var payload = [" + arr.toString() + "];";
 			$("#output").val(out);
 			$("#download").prop("disabled", false);
@@ -314,7 +322,7 @@
 			Upload a payload and it will be converted to homebrew.js format
 		</p>
 		<form action="#" id="target">
-			<label for="payload">Payload:</label><input type="file" id="payload" name="payload"> <br />
+			<label for="payload">Payload:</label><input type="file" id="payload" name="payload"> <input id="clean" name="clean" type="checkbox" checked="checked"><label for="clean">Remove Trailing Zeros</label>
 			
 			<hr />
 			
