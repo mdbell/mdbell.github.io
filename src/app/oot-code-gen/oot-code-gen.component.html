@@ -1,0 +1,63 @@
+<div class="jumbotron d-flex align-items-center">
+    <div class="container">
+        <div class="row">
+            <p>This simple tool allows you to generate custom WiiRd codes for setting specific flags for The Legend of Zelda: Ocarina of Time's Quest Screen.</p>
+            <p>This was originally for a YouTube video for <a href="https://www.youtube.com/watch?v=V5SgHm1Q8hk">Shesez</a> and was written in Plain ol' JS/HTML, and now has been redone in Angular!</p>
+        </div>
+        <hr/>
+        <form action="#">
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Output</h2>
+                    <input type="text" name="out" id="out" size="17" disabled="disabled" [value]="code" />
+                    <hr/>
+                    <h2>Region</h2>
+                    <select name="region" class="form-select" (change)="setRegion($event)">
+                      <option *ngFor="let region of regions; let i = index" [value]="i">{{region.name}} ({{region.nameExt}})</option>
+                    </select>
+                </div>
+                <div class="col-sm">
+                    <h2>Medallions</h2>
+                    <div class="form-check" *ngFor="let med of medallions">
+                        <input class="form-check-input" type="checkbox" id="med-{{med.index}}" (change)="flipBit(med.index)" />
+                        <label class="form-check-label" for="med-{{med.index}}">{{med.name}}</label>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <h2>Regular Songs</h2>
+                    <div class="form-check" *ngFor="let song of songs">
+                        <input class="form-check-input" type="checkbox" id="song-{{song.index}}" (change)="flipBit(song.index)" />
+                        <label class="form-check-label" for="song-{{song.index}}">{{song.name}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Temple Songs</h2>
+                    <div class="form-check" *ngFor="let song of teleports">
+                        <input class="form-check-input" type="checkbox" id="tele-{{song.index}}" (change)="flipBit(song.index)" />
+                        <label class="form-check-label" for="tele-{{song.index}}">{{song.name}}</label>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <h2>Stones</h2>
+                    <div class="form-check" *ngFor="let stone of stones">
+                        <input class="form-check-input" type="checkbox" id="stone-{{stone.index}}" (change)="flipBit(stone.index)" />
+                        <label class="form-check-label" for="stone-{{stone.index}}">{{stone.name}}</label>
+                    </div>
+                    <h2>Pieces of Heart</h2>
+                    <select name="hearts" class="form-select" (change)="setHearts($event)">
+                      <option *ngFor="let value of hearts">{{value}}</option>
+                    </select>
+                </div>
+                <div class="col-sm">
+                    <h2>Misc.</h2>
+                    <div class="form-check" *ngFor="let item of misc">
+                        <input class="form-check-input" type="checkbox" id="misc-{{item.index}}" (change)="flipBit(item.index)" />
+                        <label class="form-check-label" for="misc-{{item.index}}">{{item.name}}</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
