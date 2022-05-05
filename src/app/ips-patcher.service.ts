@@ -68,6 +68,13 @@ export class IpsPatcherService {
     arr.set(new Uint8Array(buffer)); // copy in the data
 
     patch.hunks.forEach(hunk =>{
+      if(hunk.offset >= arr.length) {
+        throw new Error(`Offset out of bounds! offset:${hunk.offset} binary length:${arr.length}`);
+      }
+      let end = hunk.offset + hunk.payload.length;
+      if(end >= arr.length){
+        throw new Error(`Payload length out of bounds! offset:${hunk.offset} payload len:${hunk.payload.length} binary length:${arr.length}`);
+      }
       arr.set(hunk.payload, hunk.offset)
     })
 

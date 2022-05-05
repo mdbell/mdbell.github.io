@@ -61,9 +61,13 @@ export class IpsPatcherComponent implements OnInit {
       this.error = "Missing File or binary";
       return;
     }
-    let newData = this._patchService.patchBuffer(this.ips, this.binary);
-    let blob = new Blob([newData], {type: "application/octet-stream"});
-    this._fileSaver.save(blob, "patched_" + this.fileName);
+    try{
+      let newData = this._patchService.patchBuffer(this.ips, this.binary);
+      let blob = new Blob([newData], {type: "application/octet-stream"});
+      this._fileSaver.save(blob, "patched_" + this.fileName);
+    }catch(err){
+      this.error = (<Error>err).message;
+    }
   }
 
 }
