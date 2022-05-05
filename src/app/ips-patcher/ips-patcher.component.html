@@ -1,0 +1,34 @@
+<div class="jumbotron d-flex align-items-center">
+    <div class="container">
+        <div class="row">
+            <p>Please select your IPS file, as well as the binary file to patch</p>
+        </div>
+        <div *ngIf="error" class="alert alert-danger" role="alert">
+            {{error}}
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h3>IPS File:</h3>
+                <input type="file" class="file-upload" (change)="setIPS($event)" accept=".ips">
+            </div>
+            <div *ngIf="ips" class="col-sm">
+                <div class="alert alert-info" role="alert">
+                    <p>Total Parts: {{ips.hunks.length}}</p>
+                    <p>Total Size (bytes): {{getIpsSize()}}</p>
+                    <p>File Size: {{ips.truncate != -1 ? ips.truncate : "N/A"}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <h3>Binary File:</h3>
+                <input type="file" class="file-upload" (change)="setBinary($event)">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <input type="button" class="btn btn-primary " (click)="doPatch()" value="Patch" [disabled]="!ips || !binary" />
+            </div>
+        </div>
+    </div>
+</div>

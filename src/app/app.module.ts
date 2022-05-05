@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { OotCodeGenComponent } from './oot-code-gen/oot-code-gen.component';
+import { IpsPatcherComponent } from './ips-patcher/ips-patcher.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    OotCodeGenComponent
+    OotCodeGenComponent,
+    IpsPatcherComponent
   ],
   imports: [
     BrowserModule,

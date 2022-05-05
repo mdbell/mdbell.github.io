@@ -2,3 +2,8 @@
     padding: 2px;
     margin-left: 7px;
 }
+
+.nav-bg {
+    --bs-bg-opacity: 1;
+    background-color: rgb(74, 74, 74) !important;
+}
