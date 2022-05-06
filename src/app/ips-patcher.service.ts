@@ -49,7 +49,6 @@ export class IpsPatcherService {
         hunk = new Uint8Array(data, pos, len);
         pos += len;
       }
-      console.log(`${offset} - ${pos} - ${len}`);
       res.hunks.push({
         offset: offset,
         payload: hunk

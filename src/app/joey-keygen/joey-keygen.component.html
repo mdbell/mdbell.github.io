@@ -1,0 +1,36 @@
+<div class="jumbotron d-flex align-items-center">
+    <div class="container">
+        <div class="row">
+            <p>This is an update key generator for the <a href="https://bennvenn.myshopify.com/products/reader-writer-gen2">Joey Joebags Gen 3</a> Gameboy Cartridge reader/writer</p>
+            <p>You can obtain your device ids from the Joey program's GUI</p>
+        </div>
+        <div class="row" *ngIf="error">
+            <div class="alert alert-danger" role="alert">
+                {{error}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h2>Device IDs</h2>
+                <div class="form-group">
+                    <label for="id1">ID 1:</label>
+                    <input type="text" class="form-control" name="id1" id="id1" placeholder="00000000" [(ngModel)]="id1" (change)="computeKey()" />
+                </div>
+                <div class="form-group">
+                    <label for="id2">ID 2:</label>
+                    <input type="text" class="form-control" name="id2" id="id2" placeholder="00000000" [(ngModel)]="id2" (change)="computeKey()" />
+                </div>
+                <div class="form-group">
+                    <label for="id3">ID 3:</label>
+                    <input type="text" class="form-control" name="id3" id="id3" placeholder="00000000" [(ngModel)]="id3" (change)="computeKey()" />
+                </div>
+            </div>
+            <div class="col">
+                <h2>Generated Key</h2>
+                <div class="form-group">
+                    <input type="text" class="form-control" [(ngModel)]="key" disabled/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
