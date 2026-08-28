@@ -1,0 +1,109 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+  maxDepth?: number;
+}
+
+const { headings, maxDepth = 3 } = Astro.props;
+
+// Exclude top-level H1 and headings deeper than maxDepth
+const toc = headings.filter((h) => h.depth > 1 && h.depth <= maxDepth);
+---
+
+{toc.length > 0 && (
+  <details class="toc" open>
+    <summary class="toc-title">Table of Contents</summary>
+    <ul>
+      {toc.map((heading) => (
+        <li class={`depth-${heading.depth}`}>
+          <a href={`#${heading.slug}`}>{heading.text}</a>
+        </li>
+      ))}
+    </ul>
+  </details>
+)}
+
+<script>
+  // Auto-collapse on small screens on initial load
+  const mediaQuery = window.matchMedia('(max-width: 768px)');
+  const tocDetails = document.querySelectorAll<HTMLDetailsElement>('details.toc');
+
+  function handleScreenChange(e: MediaQueryListEvent | MediaQueryList) {
+    tocDetails.forEach((details) => {
+      if (e.matches) {
+        details.removeAttribute('open');
+      } else {
+        details.setAttribute('open', '');
+      }
+    });
+  }
+
+  // Set initial state
+  handleScreenChange(mediaQuery);
+
+  // Listen for viewport changes
+  mediaQuery.addEventListener('change', handleScreenChange);
+</script>
+
+<style>
+  .toc {
+    background-color: var(--gray-light, #f8f9fa);
+    border: 1px solid var(--gray-light, #e5e7eb);
+    border-radius: 8px;
+    padding: 0.75rem 1.25rem;
+    margin: 1.5rem 0 2rem 0;
+  }
+  
+  .toc-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgb(var(--gray-dark));
+  }
+
+  .toc-title:hover {
+    color: var(--accent, #2337ff);
+  }
+
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0.25rem 1.25rem;
+  }
+
+  .toc li {
+    margin: 0.35rem 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .toc a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .toc a:hover {
+    color: var(--accent, #2337ff);
+    text-decoration: underline;
+  }
+
+  .toc .depth-3 {
+    padding-left: 1rem;
+  }
+
+  .toc .depth-4 {
+    padding-left: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .toc {
+      padding: 0.65rem 1rem;
+    }
+  }
+</style>

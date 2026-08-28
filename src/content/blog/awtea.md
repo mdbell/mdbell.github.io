@@ -13,26 +13,25 @@ taking decades of desktop software and legacy games with them.
 
 And it was the right call! Java was... Well to put it nicely, insecure. Java
 'drive-bys' were rather common, since the applet was running in a standalone
-JVM - a totally seperate process from the browser, outside of all standard
+JVM - a totally separate process from the browser, outside of all standard
 browser sandboxing mechanisms. There were attempts to make it more secure (such
 as disallowing a number of permissions that an unsigned applet would have, and
 eventually blocking unsigned applets by default completely) but the writing was
 on the wall. The browser model had won and NPAPI was a liability.
 
 With the death of plugins an incredible amount of early web history and
-enterprise software tooling was effectively stranded. But today, the browser
-ecosystem looks fundamentally different. Browsers now have many additional
-features that function in ways that meet the same needs as many applets did. For
-basic rendering primitives there's the
-[Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API), for
-audio there's
-[Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API),
-there's even the ability to access external peripherals like
-[USB](https://developer.mozilla.org/en-US/docs/Web/API/WebUSB_API) and
-[Serial](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API), and
-more devices (provided you're not on
-[Firefox](https://mozilla.github.io/standards-positions) which is a bit pickier
-on what APIs they implement, for privacy reasons.)
+enterprise software tooling was effectively stranded. But the browser ecosystem
+looks fundamentally different today. Most of what applets were used for now has
+a native browser equivalent: the
+[Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) for
+rendering,
+[Web Audio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) for
+sound, even
+[WebUSB](https://developer.mozilla.org/en-US/docs/Web/API/WebUSB_API) and
+[WebSerial](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) for
+peripheral access (assuming you're not on
+[Firefox](https://mozilla.github.io/standards-positions) which is pickier about
+these, for privacy reasons.)
 
 And while those features are neat, they don't really address the _existing_
 software that lives on only as applets. If the source is available, in theory
@@ -53,9 +52,11 @@ transpiles them into a number of different targets (WebAssembly and JavaScript
 are the ones we use, but it can also target C.) What really sets it apart is the
 fact that you don't need the original source code at all, you can take an
 existing java class, feed it into TeaVM, and it will emit functionally
-equivilant code. In addition, TeaVM (optionally) performs aggressive
+equivalent code. In addition, TeaVM (optionally) performs aggressive
 optimizations on the code, such as dead-code removal, devirtualization, and more
 to yield remarkably small and fast artifacts.
+
+### The AWT Gap
 
 However TeaVM alone isn't enough to run a GUI application. It knows how to
 translate the logic, and even portions of the runtime (thanks to their fantastic
@@ -74,42 +75,41 @@ Swing and AWT support:
 
 That's _more_ than fair. Knowing what I know now about how deep the AWT iceberg
 actually goes, I completely understand why it was outside the scope of TeaVM
-core.
+core. But that didn't make the problem go away. I still had software to save,
+and if TeaVM wasn't going to solve AWT, I'd have to.
 
-However there were some applets I wanted to run in a modern browser. My primary
-focus were some games from my childhood, but I also had a professional reason
-too! I've had a long term client who years ago I made some applets for a few
-different uses.
+My primary motivation was professional: I'd had a long-term client for whom,
+years ago, I'd built several applets. One was a ~500-line applet that redacted
+personal information from customer images, saving them from buying expensive
+image-editing licenses for every machine. But for the other applets, the
+original developers were long gone, the source code was lost, and the binaries
+were heavily obfuscated. Porting my own code by hand was plausible... But
+resurrecting the rest required an actual runtime. (There were a few of my
+childhood-favorite games I wanted running again too, if I'm honest.)
 
-One was a ~500 line applet to redact personal information from customer images,
-saving them from buying expensive image editing licenses for every machine. But
-for the other applets, the original developers were long gone, the source code
-was lost, and the binaries were heavily obfuscated. Porting my own code by hand
-was plausible... But resurrecting the rest required a runtime solution.
-
-### A Brief Interlude
+### Why AWT Is Different
 
 Before diving into the implementation, it helps to understand why AWT is such a
 unique beast compared to modern web UI libraries—or even later Java frameworks
 like Swing.
 
-Designed in the mid-90s, AWT relied on a architecture built around **heavyweight
-native peers**. When you instantiated a `java.awt.Button` or
+Designed in the mid-90s, AWT relied on an architecture built around
+**heavyweight native peers**. When you instantiated a `java.awt.Button` or
 `java.awt.TextField`, Java didn't draw pixels onto a surface. Instead, the JVM
 invoked native C code via JNI to instantiate a real OS widget—an `HWND` on
 Windows, a `Widget` on X11, or an `NSView` on macOS—and handed a native memory
 handle back to Java. The `java.awt.Button` object was essentially just a remote
 control for a widget owned by the operating system.
 
-Stnadard Desktop AWT Flow:
+Standard Desktop AWT Flow:
 
 ```
 [Java Application] -> [java.awt.Button] -> [Button Peer] -> [JNI] -> [Win32/X11/Cocoa Widget]
 ```
 
-Later on, Swing introduced 'lightweight' components, which renedered their own
+Later on, Swing introduced 'lightweight' components, which rendered their own
 pixels in Java. But even then under the hood Swing relies on AWT, every Swing
-window had to ultimiately sit inside of an AWT `Frame` or `Applet` - a root
+window had to ultimately sit inside of an AWT `Frame` or `Applet` - a root
 heavyweight peer.
 
 ## Into the Madness
