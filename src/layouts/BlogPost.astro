@@ -5,6 +5,7 @@ import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import Comments from '../components/Comments.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: MarkdownHeading[];
@@ -42,6 +43,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
             </div>
             {showToc && (<TableOfContents headings={headings} maxDepth={tocMaxDepth}/>)}
             <slot />
+            <Comments />
         </div>
     </article>
 </BaseLayout>
