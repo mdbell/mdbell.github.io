@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection("blog"))
+    .filter((res) => import.meta.env.PROD ? !res.data.draft : true);
+
+const tagCounts = posts.reduce((acc, post) => {
+    (post.data.tags || []).forEach((tag) => {
+        acc[tag] = (acc[tag] || 0) + 1;
+    });
+    return acc;
+}, {} as Record<string, number>);
+
+const sortedTags = Object.keys(tagCounts).sort();
+---
+
+<BaseLayout title={`Tags | ${SITE_TITLE}`} description="Browse all article tags">
+    <section>
+        <div class="tags-header">
+            <h1>Explore Tags</h1>
+            <p>Discover articles categorized by topic</p>
+        </div>
+
+        {
+            sortedTags.length > 0 ? (
+                <div class="tags-grid">
+                    {sortedTags.map((tag) => (
+                        <a href={`/tags/${tag}`} class="tag-card">
+                            <span>#{tag}</span>
+                            <span class="count">({tagCounts[tag]})</span>
+                        </a>
+                    ))}
+                </div>
+            ) : (
+                <div class="empty-state">
+                    <p>No tags found across published posts yet.</p>
+                </div>
+            )
+        }
+    </section>
+</BaseLayout>
+
+<style>
+    .tags-header {
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+    .tags-header h1 {
+        font-size: 2.5rem;
+        margin: 0 0 0.5rem 0;
+    }
+    .tags-header p {
+        color: rgb(var(--gray));
+        margin: 0;
+    }
+    .tags-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+    .tag-card {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        border-radius: 12px;
+        background-color: rgb(var(--gray-light));
+        border: 1px solid rgba(var(--gray), 20%);
+        color: rgb(var(--black));
+        text-decoration: none;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: 0.2s ease;
+    }
+    .tag-card:hover {
+        color: rgb(var(--accent));
+        border-color: rgb(var(--accent));
+        box-shadow: var(--box-shadow);
+        transform: translateY(-2px);
+    }
+    .count {
+        font-size: 0.85em;
+        color: rgb(var(--gray));
+    }
+    .tag-card:hover .count {
+        color: rgb(var(--accent));
+    }
+    .empty-state {
+        padding: 4rem 2rem;
+        border: 1px dashed rgba(var(--gray), 40%);
+        border-radius: 12px;
+        text-align: center;
+        background-color: rgb(var(--gray-light));
+    }
+    @media (max-width: 720px) {
+        .tags-header h1 { font-size: 1.8rem; }
+        .tags-grid { gap: 0.75rem; }
+        .tag-card { font-size: 1rem; padding: 0.6rem 1rem; }
+    }
+</style>

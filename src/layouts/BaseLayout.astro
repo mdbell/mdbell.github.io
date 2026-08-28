@@ -1,0 +1,52 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+    <slot name="head" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  /* Sticky footer layout using Flexbox */
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Fallback for browsers without svh */
+    min-height: 100svh; /* Small Viewport Height handles mobile browser toolbars accurately */
+  }
+
+  main {
+    flex: 1 0 auto; /* Pushes the footer down to fill remaining space */
+    width: 960px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+</style>

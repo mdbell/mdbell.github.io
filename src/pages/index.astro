@@ -1,8 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
@@ -13,120 +11,111 @@ const posts = (await getCollection('blog'))
     .slice(0, 3);
 ---
 
-<!doctype html>
-<html lang="en">
-    <head>
-        <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-        <style>
-            .hero {
-                padding: 2.5rem 0 1.5rem 0;
-                border-bottom: 1px solid var(--gray-light, #e5e7eb);
-                margin-bottom: 2rem;
-            }
-            .hero h1 {
-                font-size: 2.5rem;
-                line-height: 1.2;
-                margin-bottom: 0.75rem;
-            }
-            .hero p {
-                font-size: 1.2rem;
-                color: var(--gray, #4b5563);
-                max-width: 60ch;
-                line-height: 1.6;
-            }
-            .section-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: baseline;
-                margin-bottom: 1.5rem;
-            }
-            .recent-posts {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-            .post-item {
-                margin-bottom: 1.5rem;
-                padding-bottom: 1.5rem;
-                border-bottom: 1px solid var(--gray-light, #f3f4f6);
-            }
-            .post-item a {
-                text-decoration: none;
-                color: inherit;
-                display: block;
-            }
-            .post-item a:hover h3 {
-                color: var(--accent, #2337ff);
-            }
-            .post-title {
-                font-size: 1.3rem;
-                margin: 0 0 0.25rem 0;
-                transition: color 0.2s ease;
-            }
-            .post-date {
-                font-size: 0.875rem;
-                color: var(--gray, #6b7280);
-                margin-bottom: 0.5rem;
-            }
-            .post-description {
-                margin: 0;
-                color: var(--gray-dark, #374151);
-            }
-            .view-all {
-                font-weight: 600;
-                text-decoration: none;
-            }
-            .empty-state {
-                padding: 2rem;
-                border: 1px dashed var(--gray, #6b7280);
-                border-radius: 8px;
-                text-align: center;
-                background-color: var(--gray-light, rgba(255, 255, 255, 0.02));
-            }
-            .empty-state p {
-                margin: 0;
-                color: var(--gray, #6b7280);
-            }
-        </style>
-    </head>
-    <body>
-        <Header />
-        <main>
-            <section class="hero">
-                <h1>Hi, I'm Matt</h1>
-                <p>
-                    Welcome! I’m a software developer who likes building clean tools, tinkering with web infrastructure, and breaking things down to see how they work.
-                    This is my digital scratchpad where I log projects, share what I’m learning, and write about software engineering.
-                </p>
-            </section>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+    <section class="hero">
+        <h1>Hi, I'm Matt</h1>
+        <p>
+            Welcome! I’m a software developer who likes building clean tools, tinkering with web infrastructure, and breaking things down to see how they work.
+            This is my digital scratchpad where I log projects, share what I’m learning, and write about software engineering.
+        </p>
+    </section>
 
-            <section>
-                <div class="section-header">
-                    <h2>Latest Writing</h2>
-                    {posts.length > 0 && <a href="/blog" class="view-all">View all posts &rarr;</a>}
-                </div>
+    <section>
+        <div class="section-header">
+            <h2>Latest Writing</h2>
+            {posts.length > 0 && <a href="/blog" class="view-all">View all posts &rarr;</a>}
+        </div>
 
-                {posts.length > 0 ? (
-                    <ul class="recent-posts">
-                        {posts.map((post) => (
-                            <li class="post-item">
-                                <a href={`/blog/${post.id}/`}>
-                                    <h3 class="post-title">{post.data.title}</h3>
-                                    <div class="post-date">
-                                        <FormattedDate date={post.data.pubDate} />
-                                    </div>
-                                    <p class="post-description">{post.data.description}</p>
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <div class="empty-state">
-                        <p>No posts published yet. Check back soon for new articles!</p>
-                    </div>
-                )}
-            </section>
-        </main>
-        <Footer />
-    </body>
-</html>
+        {posts.length > 0 ? (
+            <ul class="recent-posts">
+                {posts.map((post) => (
+                    <li class="post-item">
+                        <a href={`/blog/${post.id}/`}>
+                            <h3 class="post-title">{post.data.title}</h3>
+                            <div class="post-date">
+                                <FormattedDate date={post.data.pubDate} />
+                            </div>
+                            <p class="post-description">{post.data.description}</p>
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        ) : (
+            <div class="empty-state">
+                <p>No posts published yet. Check back soon for new articles!</p>
+            </div>
+        )}
+    </section>
+</BaseLayout>
+
+<style>
+    .hero {
+        padding: 2.5rem 0 1.5rem 0;
+        border-bottom: 1px solid var(--gray-light, #e5e7eb);
+        margin-bottom: 2rem;
+    }
+    .hero h1 {
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-bottom: 0.75rem;
+    }
+    .hero p {
+        font-size: 1.2rem;
+        color: var(--gray, #4b5563);
+        max-width: 60ch;
+        line-height: 1.6;
+    }
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 1.5rem;
+    }
+    .recent-posts {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .post-item {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--gray-light, #f3f4f6);
+    }
+    .post-item a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    .post-item a:hover h3 {
+        color: var(--accent, #2337ff);
+    }
+    .post-title {
+        font-size: 1.3rem;
+        margin: 0 0 0.25rem 0;
+        transition: color 0.2s ease;
+    }
+    .post-date {
+        font-size: 0.875rem;
+        color: var(--gray, #6b7280);
+        margin-bottom: 0.5rem;
+    }
+    .post-description {
+        margin: 0;
+        color: var(--gray-dark, #374151);
+    }
+    .view-all {
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .empty-state {
+        padding: 2rem;
+        border: 1px dashed var(--gray, #6b7280);
+        border-radius: 8px;
+        text-align: center;
+        background-color: var(--gray-light, rgba(255, 255, 255, 0.02));
+    }
+    .empty-state p {
+        margin: 0;
+        color: var(--gray, #6b7280);
+    }
+</style>

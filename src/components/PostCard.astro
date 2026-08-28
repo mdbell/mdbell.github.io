@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  isFirst?: boolean;
+}
+
+const { post, isFirst = false } = Astro.props;
+---
+
+<li class:list={[{ 'first-card': isFirst }]}>
+  <a href={`/blog/${post.id}/`}>
+    {
+      post.data.heroImage && (
+        <Image
+          width={720}
+          height={360}
+          src={post.data.heroImage}
+          alt=""
+        />
+      )
+    }
+    <h4 class="title">{post.data.title}</h4>
+    <p class="date">
+      <FormattedDate date={post.data.pubDate} />
+    </p>
+  </a>
+</li>
+
+<style>
+  li {
+    width: calc(50% - 1rem);
+    list-style-type: none;
+  }
+
+  li * {
+    text-decoration: none;
+    transition: 0.2s ease;
+  }
+
+  li img {
+    margin-bottom: 0.5rem;
+    border-radius: 12px;
+    width: 100%;
+    height: auto;
+  }
+
+  li a {
+    display: block;
+  }
+
+  .title {
+    margin: 0;
+    color: rgb(var(--black));
+    line-height: 1.2;
+    font-size: 1.5rem;
+  }
+
+  .date {
+    margin: 0.5rem 0 0 0;
+    color: rgb(var(--gray));
+  }
+
+  li a:hover .title,
+  li a:hover .date {
+    color: rgb(var(--accent));
+  }
+
+  li a:hover img {
+    box-shadow: var(--box-shadow);
+  }
+
+  /* Specific styles when rendered as the featured first card */
+  li.first-card {
+    width: 100%;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  li.first-card .title {
+    font-size: 2.369rem;
+  }
+
+  @media (max-width: 720px) {
+    li {
+      width: 100%;
+      text-align: center;
+    }
+
+    li.first-card {
+      margin-bottom: 0;
+    }
+
+    li.first-card .title {
+      font-size: 1.563rem;
+    }
+  }
+</style>
