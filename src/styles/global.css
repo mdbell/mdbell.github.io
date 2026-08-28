@@ -320,13 +320,20 @@ section[data-footnotes] li {
 	text-decoration: underline;
 }
 
-/* Prevent sticky header from overlapping footnote back-reference targets */
-[id^="user-content-fnref-"],
-[id^="user-content-fn-"] {
-	scroll-margin-top: 5rem; /* Adjust to match or exceed your header height */
+/* Scale down inline code blocks within footnotes */
+
+section[data-footnotes] code {
+	font-size: 0.8em;
+	padding: 0.15em 0.35em;
 }
 
-/* Optional: Highlight the target element briefly when jumped to */
+/* Prevent sticky header from overlapping footnote back-reference targets */
+
+[id^="user-content-fnref-"],
+[id^="user-content-fn-"] {
+	scroll-margin-top: 5rem;
+}
+
 :target {
 	scroll-margin-top: 5rem;
 }
