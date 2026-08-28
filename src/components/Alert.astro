@@ -1,12 +1,13 @@
 ---
 interface Props {
-  type?: 'warn' | 'error' | 'success';
+  type?: 'info' | 'warn' | 'error' | 'success';
   badge?: string;
 }
 
-const { type = 'warn', badge } = Astro.props;
+const { type = 'info', badge } = Astro.props;
 
 const defaultBadges = {
+  info: 'INFO',
   warn: 'WARNING',
   error: 'ERROR',
   success: 'OK',
@@ -57,6 +58,17 @@ const badgeText = badge ?? defaultBadges[type];
 
   .alert-content :global(p) {
     margin: 0;
+  }
+
+  /* Info Variant */
+  .alert-info .alert-body {
+    background-color: var(--info-bg);
+    border-color: var(--info-border);
+    color: var(--info-text);
+  }
+  .alert-info .alert-badge {
+    background-color: var(--info-badge-bg);
+    color: var(--info-badge-text);
   }
 
   /* Warn Variant */

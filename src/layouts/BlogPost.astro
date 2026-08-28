@@ -16,38 +16,46 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
 ---
 
 <BaseLayout title={title} description={description}>
-    <article class="post-article">
-        <div class="hero-image">
-            {heroImage && <Image width={1200} height={600} src={heroImage} alt="" />}
-        </div>
-        <div class="prose">
-            <div class="title">
-                <div class="date">
-                    <FormattedDate date={pubDate} />
-                    {
-                        updatedDate && (
-                            <div class="last-updated-on">
-                                Last updated on <FormattedDate date={updatedDate} />
-                            </div>
-                        )
-                    }
-                </div>
-                <h1>{title}</h1>
-                {tags.length > 0 && (
-                    <div class="tags">
-                        {tags.map((tag) => (
-                            <a href={`/tags/${tag}`} class="tag">#{tag}</a>
-                        ))}
-                    </div>
+    {/* Full-bleed Header Section */}
+    <header class="editorial-header">
+        <div class="header-inner">
+            <div class="meta-row">
+                <FormattedDate date={pubDate} />
+                {updatedDate && (
+                    <span class="last-updated">
+                        (Updated <FormattedDate date={updatedDate} />)
+                    </span>
                 )}
-                <hr />
             </div>
+
+            <h1 class="post-title">{title}</h1>
+
+            {description && <p class="post-description">{description}</p>}
+
+            {tags.length > 0 && (
+                <div class="tags">
+                    {tags.map((tag) => (
+                        <a href={`/tags/${tag}`} class="tag">#{tag}</a>
+                    ))}
+                </div>
+            )}
+        </div>
+    </header>
+
+    <article class="post-article">
+        {heroImage && (
+            <div class="hero-image">
+                <Image width={1200} height={600} src={heroImage} alt="" />
+            </div>
+        )}
+
+        <div class="prose">
+            {showToc && <TableOfContents headings={headings} maxDepth={tocMaxDepth}/>}
             {draft && (
-                <Alert type="warn">
-                    <p>This post is currently a work in progress! It's subject to change at any time.</p>
+                <Alert type="warn" badge="DRAFT">
+                <p>This post is currently a work in progress! It's subject to change at any time.</p>
                 </Alert>
             )}
-            {showToc && (<TableOfContents headings={headings} maxDepth={tocMaxDepth}/>)}
             <slot />
             <Comments />
         </div>
@@ -55,64 +63,60 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
 </BaseLayout>
 
 <style>
-    /* Override BaseLayout main max-width for full blog layout */
-    :global(main) {
-        max-width: 1000px !important;
-        padding: 0 1.5rem !important;
+    /* Full-width editorial header */
+    .editorial-header {
+        position: relative;
+        padding: 4rem 1.5rem 3rem 1.5rem;
+        margin: -2rem -1.5rem 3rem -1.5rem; /* Offsets BaseLayout padding */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    .hero-image {
-        width: 100%;
-        margin-bottom: 2rem;
-    }
-    .hero-image img {
-        display: block;
-        width: 100%;
-        height: auto;
-        max-height: 520px;
-        object-fit: cover;
-        border-radius: 12px;
-        box-shadow: var(--box-shadow);
-    }
-    .prose {
-        width: 100%;
-        max-width: 85ch;
+    .header-inner {
+        max-width: 75ch;
         margin: 0 auto;
-        padding: 1em 0;
-        color: rgb(var(--gray-dark));
-        font-size: 1.125rem;
-        line-height: 1.7;
+        text-align: left; /* Left-aligned titles feel more editorial */
     }
-    .title {
-        padding: 1em 0;
-        text-align: center;
-        line-height: 1.2;
+
+    .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--gray, #9ca3af);
+        margin-bottom: 1rem;
     }
-    .title h1 {
-        font-size: 2.75rem;
-        margin: 0 0 0.5em 0;
-    }
-    .date {
-        margin-bottom: 0.75em;
-        color: rgb(var(--gray));
-    }
-    .last-updated-on {
+
+    .last-updated {
         font-style: italic;
+    }
+
+    .post-title {
+        font-size: 3rem;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 1rem 0;
+        color: #ffffff;
+    }
+
+    .post-description {
+        font-size: 1.25rem;
+        line-height: 1.5;
+        color: #d1d5db;
+        margin: 0 0 1.5rem 0;
     }
 
     .tags {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
-        justify-content: center;
-        margin: 1rem 0;
     }
 
     .tag {
         font-size: 0.85rem;
         font-weight: 500;
         color: var(--gray-dark, #9ca3af);
-        background-color: var(--gray-light, rgba(255, 255, 255, 0.05));
+        background-color: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 0.2rem 0.6rem;
         border-radius: 999px;
@@ -121,19 +125,50 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
     }
 
     .tag:hover {
-        color: var(--accent, #60a5fa);
-        border-color: var(--accent, #60a5fa);
+        color: #60a5fa;
+        border-color: #60a5fa;
+    }
+
+    /* Content Area */
+    .post-article {
+        max-width: 75ch;
+        margin: 0 auto;
+    }
+
+    .hero-image {
+        width: 100%;
+        margin-bottom: 2.5rem;
+    }
+
+    .hero-image img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 480px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .prose {
+        width: 100%;
+        color: rgb(var(--gray-dark));
+        font-size: 1.125rem;
+        line-height: 1.7;
     }
 
     @media (max-width: 768px) {
-        :global(main) {
-            padding: 0 1rem !important;
+        .editorial-header {
+            padding: 2.5rem 1rem 2rem 1rem;
+            margin: -2rem -1rem 2rem -1rem;
         }
-        .title h1 {
-            font-size: 2rem;
+
+        .post-title {
+            font-size: 2.15rem;
         }
-        .prose {
-            font-size: 1rem;
+
+        .post-description {
+            font-size: 1.05rem;
         }
     }
 </style>

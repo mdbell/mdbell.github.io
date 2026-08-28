@@ -75,10 +75,10 @@ Swing and AWT support:
 > not focused on running existing Java, applications, it trades compatibility
 > for efficiency.
 
-That's _more_ than fair. Knowing what I know now about how deep the AWT iceberg
-actually goes, I completely understand why it was outside the scope of TeaVM
-core. But that didn't make the problem go away. I still had software to save,
-and if TeaVM wasn't going to solve AWT, I'd have to.
+That's fair, _more_ than fair really. Knowing what I know now about how deep the
+AWT iceberg actually goes, I completely understand why it was outside the scope
+of TeaVM core. But that didn't make the problem go away. I still had software to
+save, and if TeaVM wasn't going to solve AWT, I'd have to.
 
 My primary motivation was professional: I'd had a long-term client for whom,
 years ago, I'd built several applets. One was a ~500-line applet that redacted
@@ -105,8 +105,21 @@ control for a widget owned by the operating system.
 
 Standard Desktop AWT Flow:
 
-```
-[Java Application] -> [java.awt.Button] -> [Button Peer] -> [JNI] -> [Win32/X11/Cocoa Widget]
+```mermaid
+graph LR
+    subgraph JVM [JVM / Java Runtime]
+        App[Java Application] --> Button[java.awt.Button]
+        Button --> Peer[Button Peer]
+    end
+
+    subgraph NativeOS [Native Operating System]
+        JNI[JNI Layer] --> Native[Win32 / X11 / Cocoa Widget]
+    end
+
+    Peer --> JNI
+
+    style JVM fill:#3b82f614,stroke:#3b82f6,stroke-width:1px
+    style NativeOS fill:#a855f714,stroke:#a855f7,stroke-width:1px
 ```
 
 Later on, Swing introduced 'lightweight' components, which rendered their own
@@ -114,4 +127,38 @@ pixels in Java. But even then under the hood Swing relies on AWT, every Swing
 window had to ultimately sit inside of an AWT `Frame` or `Applet` - a root
 heavyweight peer.
 
+Swing Flow:
+
+```mermaid
+graph LR
+    subgraph JVM [JVM / Java Runtime]
+        App[Java Application] --> Component[javax.swing.JComponent]
+        Component --> UI[ComponentUI / Look & Feel]
+        UI --> Graphics[java.awt.Graphics2D]
+        Graphics --> Peer[Lightweight Peer / Native Canvas]
+    end
+
+    subgraph NativeOS [Native Operating System]
+        JNI[JNI Layer] --> Native[Raw Window / OS Surface]
+    end
+
+    Peer --> JNI
+    JNI --> Native
+
+    style JVM fill:#3b82f614,stroke:#3b82f6,stroke-width:1px
+    style NativeOS fill:#a855f714,stroke:#a855f7,stroke-width:1px
+```
+
 ## Into the Madness
+
+> [!NOTE]
+> **AWTea is not a full AWT implementation**. I was implementing classes needed
+> for these applets to function. There are some extra (like `javax.sound.*`)
+> that are also implemented, as I have a few games I wanted to get running. See
+> [here](https://github.com/mdbell/awtea/blob/master/docs/coverage/report.md) to
+> see what classes have implementations, as well as what portion(s) of it are
+> implemented.
+
+As neat as it'd be to walk through resurrecting that redaction applet, my client
+would probably not appreciate me publishing their internal tooling on the open
+internet.

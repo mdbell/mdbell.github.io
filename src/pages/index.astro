@@ -2,13 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { SITE_DESCRIPTION, SITE_TITLE, HOMEPAGE_MAX_POSTS } from '../consts';
 
 // Fetch top 3 most recent blog posts sorted by date
 const posts = (await getCollection('blog'))
     .filter(res => import.meta.env.PROD ? !res.data.hidden : true)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-    .slice(0, 3);
+    .slice(0, HOMEPAGE_MAX_POSTS);
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>

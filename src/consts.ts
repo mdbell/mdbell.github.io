@@ -4,3 +4,5 @@
 export const SITE_TITLE = "sudo rm -rf /*";
 export const SITE_DESCRIPTION =
     "Matthew Bell's digital scratchpad - writing about software, code, and side projects.";
+
+export const HOMEPAGE_MAX_POSTS = 3;

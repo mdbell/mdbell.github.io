@@ -3,11 +3,21 @@
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { defineConfig, fontProviders } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
+import remarkGithubBlockquoteAlerts from "remark-github-blockquote-alert";
+import mermaid from "astro-mermaid";
 
 // https://astro.build/config
 export default defineConfig({
 	site: "https://mdbell.ca",
-	integrations: [mdx(), sitemap()],
+	integrations: [
+		mdx(),
+		sitemap(),
+		mermaid({
+			// Theme options: 'dark', 'default', 'forest', 'neutral'
+			theme: "dark",
+		}),
+	],
 	fonts: [
 		{
 			provider: fontProviders.local(),
@@ -32,4 +42,9 @@ export default defineConfig({
 			},
 		},
 	],
+	markdown: {
+		processor: unified({
+			remarkPlugins: [remarkGithubBlockquoteAlerts],
+		}),
+	},
 });
