@@ -274,3 +274,59 @@ hr {
 	background-color: var(--success-badge-bg, #22c55e);
 	color: var(--success-badge-text, #000000);
 }
+
+/* Footnote section container */
+section[data-footnotes] {
+	margin-top: 4rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	font-size: 0.875rem;
+	color: var(--gray, #9ca3af);
+}
+
+/* Hide the screen-reader footnote heading visually */
+section[data-footnotes] .sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/* Footnote list spacing */
+
+section[data-footnotes] ol {
+	padding-left: 1.25rem;
+	margin: 0;
+}
+
+section[data-footnotes] li {
+	margin-bottom: 0;
+}
+
+/* Back-link arrow symbol (↩) */
+.data-footnote-backref {
+	font-family: sans-serif;
+	text-decoration: none;
+	color: var(--info-text, #3b82f6);
+	margin-left: 0.25rem;
+}
+
+.data-footnote-backref:hover {
+	text-decoration: underline;
+}
+
+/* Prevent sticky header from overlapping footnote back-reference targets */
+[id^="user-content-fnref-"],
+[id^="user-content-fn-"] {
+	scroll-margin-top: 5rem; /* Adjust to match or exceed your header height */
+}
+
+/* Optional: Highlight the target element briefly when jumped to */
+:target {
+	scroll-margin-top: 5rem;
+}
