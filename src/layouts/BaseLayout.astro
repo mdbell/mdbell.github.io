@@ -50,3 +50,94 @@ const { title, description } = Astro.props;
     padding: 2rem 1.5rem;
   }
 </style>
+
+<script>
+  function attachCopyButtons() {
+    // Select all code blocks rendered by Astro/Shiki/Prism
+    const codeBlocks = document.querySelectorAll('pre');
+
+    codeBlocks.forEach((codeBlock) => {
+      // Prevent adding duplicate buttons if navigating dynamically
+      if (codeBlock.querySelector('.copy-code-button')) return;
+
+      // Create wrapper around pre if not already styled as relative
+      codeBlock.style.position = 'relative';
+
+      const button = document.createElement('button');
+      button.className = 'copy-code-button';
+      button.type = 'button';
+      button.ariaLabel = 'Copy code to clipboard';
+      button.innerText = 'Copy';
+
+      button.addEventListener('click', async () => {
+        const code = codeBlock.querySelector('code')?.innerText || codeBlock.innerText;
+
+        try {
+          await navigator.clipboard.writeText(code);
+          button.innerText = 'Copied!';
+          button.classList.add('copied');
+
+          setTimeout(() => {
+            button.innerText = 'Copy';
+            button.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy code: ', err);
+          button.innerText = 'Failed';
+        }
+      });
+
+      codeBlock.appendChild(button);
+    });
+  }
+
+  // Run on initial page load
+  attachCopyButtons();
+
+  // Support Astro View Transitions if enabled
+  document.addEventListener('astro:page-load', attachCopyButtons);
+</script>
+
+<style is:global>
+  /* Position and style the Copy Button over pre blocks */
+  pre {
+    position: relative;
+  }
+
+  .copy-code-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: rgb(var(--gray-dark, 209 213 219));
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.15s ease, border-color 0.15s ease;
+    z-index: 10;
+  }
+
+  /* Show button on hover or when focused */
+  pre:hover .copy-code-button,
+  .copy-code-button:focus {
+    opacity: 1;
+  }
+
+  .copy-code-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  /* Styling state when copied */
+  .copy-code-button.copied {
+    background-color: rgba(34, 197, 94, 0.2); /* Soft green */
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #4ade80;
+    opacity: 1;
+  }
+</style>
