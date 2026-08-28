@@ -10,13 +10,16 @@ import Alert from '../components/Alert.astro';
 import PostNavigation from '../components/PostNavigation.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
+  id: string;
   headings?: MarkdownHeading[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc, tocMaxDepth, headings = [], draft = false } = Astro.props;
+const { id, title, description, pubDate, updatedDate, heroImage, tags = [], showToc, tocMaxDepth, headings = [], draft = false } = Astro.props;
+
+
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} postId={id}>
     {/* Full-bleed Header Section */}
     <header class="editorial-header">
         <div class="header-inner">

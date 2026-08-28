@@ -6,15 +6,16 @@ import Header from '../components/Header.astro';
 interface Props {
   title: string;
   description: string;
+  postId?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, postId } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} postId={postId}/>
     <slot name="head" />
   </head>
   <body>
