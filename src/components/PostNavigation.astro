@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+
+interface Props {
+  currentPubDate: Date;
+}
+
+const { currentPubDate } = Astro.props;
+
+// Fetch all published posts sorted by publication date
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
+
+const currentIndex = posts.findIndex(
+  (post) => post.data.pubDate.valueOf() === currentPubDate.valueOf()
+);
+
+const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+
+// Check if any navigation targets exist
+const hasNavigation = prevPost !== null || nextPost !== null;
+---
+
+{
+  hasNavigation && (
+    <nav class="post-navigation" aria-label="Post navigation">
+      {prevPost ? (
+        <a href={`/blog/${prevPost.id}/`} class="nav-button prev">
+          <span class="nav-label">&larr; Previous</span>
+          <span class="nav-title">{prevPost.data.title}</span>
+        </a>
+      ) : (
+        <div class="nav-placeholder" />
+      )}
+
+      {nextPost ? (
+        <a href={`/blog/${nextPost.id}/`} class="nav-button next">
+          <span class="nav-label">Next &rarr;</span>
+          <span class="nav-title">{nextPost.data.title}</span>
+        </a>
+      ) : (
+        <div class="nav-placeholder" />
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .post-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-button {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .nav-button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-button.next {
+    text-align: right;
+  }
+
+  .nav-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--info-text, #3b82f6);
+    margin-bottom: 0.35rem;
+  }
+
+  .nav-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    line-height: 1.3;
+  }
+
+  @media (max-width: 640px) {
+    .post-navigation {
+      grid-template-columns: 1fr;
+    }
+
+    .nav-button.next {
+      text-align: left;
+    }
+  }
+</style>

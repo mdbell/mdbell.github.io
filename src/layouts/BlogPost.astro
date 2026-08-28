@@ -7,6 +7,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import Comments from '../components/Comments.astro';
 import Alert from '../components/Alert.astro';
+import PostNavigation from '../components/PostNavigation.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: MarkdownHeading[];
@@ -57,6 +58,9 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
                 </Alert>
             )}
             <slot />
+
+            <PostNavigation currentPubDate={pubDate} />
+
             <Comments />
         </div>
     </article>
