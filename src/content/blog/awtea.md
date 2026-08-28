@@ -1,6 +1,6 @@
 ---
 title: "Bringing Java AWT to the Browser"
-description: "How I built a clean-room Java AWT runtime using TeaVM, WebGL, and WebAssembly."
+description: "How I built a clean-room Java AWT runtime using TeaVM."
 pubDate: "Aug 28 2026"
 # heroImage: "../../assets/blog-placeholder-3.jpg"
 draft: true
