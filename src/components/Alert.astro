@@ -1,0 +1,94 @@
+---
+interface Props {
+  type?: 'warn' | 'error' | 'success';
+  badge?: string;
+}
+
+const { type = 'warn', badge } = Astro.props;
+
+const defaultBadges = {
+  warn: 'WARNING',
+  error: 'ERROR',
+  success: 'OK',
+};
+
+const badgeText = badge ?? defaultBadges[type];
+---
+
+<div class={`alert-wrapper alert-${type}`}>
+  <div class="alert-body" role="status">
+    <span class="alert-badge">{badgeText}</span>
+    <div class="alert-content">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  .alert-wrapper {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto 2rem auto;
+  }
+
+  .alert-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+    box-sizing: border-box;
+    border: 1px solid;
+  }
+
+  .alert-badge {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    text-transform: uppercase;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .alert-content :global(p) {
+    margin: 0;
+  }
+
+  /* Warn Variant */
+  .alert-warn .alert-body {
+    background-color: var(--warn-bg);
+    border-color: var(--warn-border);
+    color: var(--warn-text);
+  }
+  .alert-warn .alert-badge {
+    background-color: var(--warn-badge-bg);
+    color: var(--warn-badge-text);
+  }
+
+  /* Error Variant */
+  .alert-error .alert-body {
+    background-color: var(--error-bg);
+    border-color: var(--error-border);
+    color: var(--error-text);
+  }
+  .alert-error .alert-badge {
+    background-color: var(--error-badge-bg);
+    color: var(--error-badge-text);
+  }
+
+  /* Success Variant */
+  .alert-success .alert-body {
+    background-color: var(--success-bg);
+    border-color: var(--success-border);
+    color: var(--success-text);
+  }
+  .alert-success .alert-badge {
+    background-color: var(--success-badge-bg);
+    color: var(--success-badge-text);
+  }
+</style>

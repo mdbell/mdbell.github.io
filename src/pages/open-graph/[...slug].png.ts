@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 
 const posts = await getCollection(
     "blog",
-    (post) => import.meta.env.PROD ? !post.data.draft : true,
+    (post) => import.meta.env.PROD ? !post.data.hidden : true,
 );
 
 const pages = Object.fromEntries(

@@ -6,7 +6,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 // Fetch top 3 most recent blog posts sorted by date
 const posts = (await getCollection('blog'))
-    .filter(res => import.meta.env.PROD ? !res.data.draft : true)
+    .filter(res => import.meta.env.PROD ? !res.data.hidden : true)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
     .slice(0, 3);
 ---
@@ -15,8 +15,8 @@ const posts = (await getCollection('blog'))
     <section class="hero">
         <h1>Hi, I'm Matt</h1>
         <p>
-            Welcome! I’m a software developer who likes building clean tools, tinkering with web infrastructure, and breaking things down to see how they work.
-            This is my digital scratchpad where I log projects, share what I’m learning, and write about software engineering.
+            Welcome! I'm a software developer who likes building clean tools, tinkering with web infrastructure, and breaking things down to see how they work.
+            This is my digital scratchpad where I log projects, share what I'm learning, and write about software engineering.
         </p>
     </section>
 

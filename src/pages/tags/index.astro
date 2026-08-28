@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection("blog"))
-    .filter((res) => import.meta.env.PROD ? !res.data.draft : true);
+    .filter((res) => import.meta.env.PROD ? !res.data.hidden : true);
 
 const tagCounts = posts.reduce((acc, post) => {
     (post.data.tags || []).forEach((tag) => {

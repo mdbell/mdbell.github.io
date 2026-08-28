@@ -5,7 +5,7 @@ import PostCard from '../../components/PostCard.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
 const posts = (await getCollection("blog"))
-    .filter((res) => import.meta.env.PROD ? !res.data.draft : true)
+    .filter((res) => import.meta.env.PROD ? !res.data.hidden : true)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 

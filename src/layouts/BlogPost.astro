@@ -6,12 +6,13 @@ import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import Comments from '../components/Comments.astro';
+import Alert from '../components/Alert.astro';
 
 type Props = CollectionEntry<'blog'>['data'] & {
   headings?: MarkdownHeading[];
 };
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc, tocMaxDepth, headings = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc, tocMaxDepth, headings = [], draft = false } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -41,6 +42,11 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
                 )}
                 <hr />
             </div>
+            {draft && (
+                <Alert type="warn">
+                    <p>This post is currently a work in progress! It's subject to change at any time.</p>
+                </Alert>
+            )}
             {showToc && (<TableOfContents headings={headings} maxDepth={tocMaxDepth}/>)}
             <slot />
             <Comments />
@@ -78,7 +84,6 @@ const { title, description, pubDate, updatedDate, heroImage, tags = [], showToc,
         line-height: 1.7;
     }
     .title {
-        margin-bottom: 2em;
         padding: 1em 0;
         text-align: center;
         line-height: 1.2;

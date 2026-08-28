@@ -14,6 +14,29 @@
 		0 2px 6px rgba(0, 0, 0, 40%),
 		0 8px 24px rgba(0, 0, 0, 50%),
 		0 16px 32px rgba(0, 0, 0, 60%);
+
+	/* Component specfic theme vars */
+
+	/* Warning */
+	--warn-bg: rgba(245, 158, 11, 0.1);
+	--warn-border: rgba(245, 158, 11, 0.3);
+	--warn-text: #fef08a;
+	--warn-badge-bg: #f59e0b;
+	--warn-badge-text: #000000;
+
+	/* Error */
+	--error-bg: rgba(239, 68, 68, 0.1);
+	--error-border: rgba(239, 68, 68, 0.3);
+	--error-text: #fca5a5;
+	--error-badge-bg: #ef4444;
+	--error-badge-text: #ffffff;
+
+	/* Success / Okay */
+	--success-bg: rgba(34, 197, 94, 0.1);
+	--success-border: rgba(34, 197, 94, 0.3);
+	--success-text: #86efac;
+	--success-badge-bg: #22c55e;
+	--success-badge-text: #000000;
 }
 body {
 	font-family: var(--font-atkinson);

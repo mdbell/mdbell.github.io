@@ -4,7 +4,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 export async function GET(context) {
 	const posts = (await getCollection("blog"))
-		.filter((res) => import.meta.env.PROD ? !res.data.draft : true);
+		.filter((res) => import.meta.env.PROD ? !res.data.hidden : true);
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
