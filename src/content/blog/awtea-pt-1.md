@@ -130,8 +130,8 @@ like Swing.
 Designed in the mid-90s, AWT relied on an architecture built around
 **heavyweight native peers**. When you instantiated a `java.awt.Button` or
 `java.awt.TextField`, Java didn't draw pixels onto a surface. Instead, the JVM
-invoked native C code via JNI to instantiate a real OS widget—an `HWND` on
-Windows, a `Widget` on X11, or an `NSView` on macOS—and handed a native memory
+invoked native C code via JNI to instantiate a real OS widget - an `HWND` on
+Windows, a `Widget` on X11, or an `NSView` on macOS - and handed a native memory
 handle back to Java. The `java.awt.Button` object was essentially just a remote
 control for a widget owned by the operating system.
 
@@ -210,7 +210,7 @@ we don't need to either. We only need to model the **public** interface that
 external code would use. `setVisible()`, `setLabel()`, `getLabel()`,
 `addActionListener()`, etc. Everything under the hood is fair game.
 
-That's the general strategy anyway — model the public contract, throw away
+That's the general strategy anyway - model the public contract, throw away
 everything Sun assumed about native peers, and build something that actually
 belongs in a browser. Actually pulling that off is a much longer story, and it
 starts with the first thing any GUI needs before it can do anything else: a way

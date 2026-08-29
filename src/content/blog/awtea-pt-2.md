@@ -1,6 +1,6 @@
 ---
 title: "AWTea, Part 2: Graphic Design is My Passion"
-description: "The first cut of AWTea's renderer used the Canvas 2D API — and it worked, until it didn't."
+description: "The first cut of AWTea's renderer used the Canvas 2D API - and it worked, until it didn't."
 pubDate: "Aug 29 2026"
 heroImage: "../../assets/graphic-design-is-my-passion.jpg"
 draft: true
