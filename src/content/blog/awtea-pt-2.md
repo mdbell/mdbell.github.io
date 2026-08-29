@@ -115,4 +115,8 @@ It wasn't.
 
 ## Era 2: Fonts - And Why They Suck.
 
+<div style="text-align: center;">
+
 ![The first of many bossfights](../../assets/font-rendering.jpg)
+
+</div>
