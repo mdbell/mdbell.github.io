@@ -9,7 +9,7 @@ const { currentPubDate } = Astro.props;
 
 // Fetch all published posts sorted by publication date
 const posts = (await getCollection('blog'))
-  .filter((post) => !post.data.draft)
+  .filter((post) => !post.data.hidden)
   .sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf());
 
 const currentIndex = posts.findIndex(

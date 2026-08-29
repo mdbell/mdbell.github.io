@@ -337,3 +337,94 @@ section[data-footnotes] code {
 :target {
 	scroll-margin-top: 5rem;
 }
+
+/* --- CODE DEMO TABS (Canvas Integration) --- */
+
+.code-demo-tabs {
+	display: flex;
+	flex-direction: column;
+	height: 420px; /* Lock total container height to prevent any resizing */
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 8px;
+	background: #27272a;
+	overflow: hidden;
+	margin: 1.5rem 0;
+}
+
+/* Tab Bar Header */
+.code-demo-tabs .tab-buttons {
+	display: flex;
+	background: rgba(0, 0, 0, 0.2);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	padding: 0.35rem 0.5rem;
+	gap: 0.25rem;
+	flex-shrink: 0; /* Prevents tab bar from shrinking */
+}
+
+.code-demo-tabs .tab-btn {
+	background: transparent;
+	border: none;
+	color: rgb(var(--gray));
+	padding: 0.4rem 0.8rem;
+	font-size: 0.85rem;
+	font-weight: 600;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.code-demo-tabs .tab-btn:hover {
+	color: rgb(var(--black));
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.code-demo-tabs .tab-btn.active {
+	color: var(--accent);
+	background: rgba(245, 158, 11, 0.15);
+}
+
+/* Tab Panels */
+.code-demo-tabs .tab-content {
+	display: none;
+	flex: 1;
+	min-height: 0; /* Critical for inner overflow scrolling */
+	box-sizing: border-box;
+}
+
+.code-demo-tabs .tab-content.active {
+	display: flex;
+	flex-direction: column;
+	background: #27272a;
+}
+
+/* Inner Code Block Alignment */
+.code-demo-tabs .tab-code > pre,
+.code-demo-tabs .tab-code > .expressive-code {
+	margin: 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+	background-color: transparent !important;
+	height: 100%;
+	flex: 1;
+	overflow: auto; /* Scrolls code vertically/horizontally inside fixed panel */
+	box-sizing: border-box;
+}
+
+/* Canvas Wrapper */
+.code-demo-tabs .canvas-wrapper {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	background: transparent;
+	box-sizing: border-box;
+	overflow: hidden;
+}
+
+.code-demo-tabs canvas {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	display: block;
+}

@@ -7,6 +7,8 @@ import { unified } from "@astrojs/markdown-remark";
 import remarkGithubBlockquoteAlerts from "remark-github-blockquote-alert";
 import mermaid from "astro-mermaid";
 
+import { remarkCanvasDemo } from "./src/plugins/remark-canvas-demo.mjs";
+
 // https://astro.build/config
 export default defineConfig({
 	site: "https://mdbell.ca",
@@ -44,7 +46,7 @@ export default defineConfig({
 	],
 	markdown: {
 		processor: unified({
-			remarkPlugins: [remarkGithubBlockquoteAlerts],
+			remarkPlugins: [remarkGithubBlockquoteAlerts, remarkCanvasDemo],
 		}),
 	},
 });

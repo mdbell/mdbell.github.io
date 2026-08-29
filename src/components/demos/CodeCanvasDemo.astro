@@ -1,0 +1,129 @@
+---
+interface Props {
+  width?: number;
+  height?: number;
+  label?: string;
+}
+
+const { width = 300, height = 320, label = "Interactive Canvas Output" } = Astro.props;
+---
+
+<div class="code-canvas-container">
+  <div class="demo-header">
+    <span class="demo-label">{label}</span>
+    <button class="run-btn">Run Code</button>
+  </div>
+  <div class="canvas-wrapper">
+    <canvas width={width} height={height}></canvas>
+  </div>
+</div>
+
+<script>
+  function setupCodeCanvasDemos() {
+    const containers = document.querySelectorAll<HTMLElement>('.code-canvas-container');
+
+    containers.forEach((container) => {
+      const canvas = container.querySelector<HTMLCanvasElement>('canvas');
+      const runBtn = container.querySelector<HTMLButtonElement>('.run-btn');
+      if (!canvas) return;
+
+      // Find the preceding code block element in the DOM
+      let sibling = container.previousElementSibling;
+      let codeText = '';
+
+      while (sibling) {
+        if (sibling.tagName === 'PRE' || sibling.querySelector('pre')) {
+          const codeEl = sibling.tagName === 'PRE' ? sibling : sibling.querySelector('pre');
+          codeText = codeEl?.textContent || '';
+          break;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+
+      if (!codeText) return;
+
+      const executeSnippet = () => {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Reset canvas state and clear pixels before running
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
+        try {
+          // Execute code text with 'canvas' and 'ctx' in scope
+          const run = new Function('canvas', 'ctx', codeText);
+          run(canvas, ctx);
+        } catch (err) {
+          console.error('Error executing live canvas snippet:', err);
+        }
+      };
+
+      // Run on page load
+      executeSnippet();
+
+      // Allow manual re-execution via the button
+      runBtn?.addEventListener('click', executeSnippet);
+    });
+  }
+
+  // Support Astro page transitions / initial execution
+  setupCodeCanvasDemos();
+  document.addEventListener('astro:page-load', setupCodeCanvasDemos);
+</script>
+
+<style>
+  .code-canvas-container {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: #0f172a;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+
+  .demo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .demo-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #94a3b8;
+  }
+
+  .run-btn {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .run-btn:hover {
+    background: rgba(59, 130, 246, 0.35);
+  }
+
+  .canvas-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background: #020617;
+  }
+
+  canvas {
+    background: transparent;
+  }
+</style>

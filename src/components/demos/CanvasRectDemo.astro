@@ -1,0 +1,77 @@
+<div class="demo-box">
+  <div class="demo-header">
+    <span>Live Canvas Output</span>
+    <button id="redraw-btn">Randomize Colors</button>
+  </div>
+  <canvas id="my-canvas" width="300" height="350"></canvas>
+</div>
+
+<script>
+  function draw(fillColor = "red", strokeColor = "blue") {
+    const canvas = document.getElementById("my-canvas") as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Clear background
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Fill rectangle
+    ctx.fillStyle = fillColor;
+    ctx.fillRect(10, 100, 50, 200);
+
+    // Stroke rectangle
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(10, 100, 50, 200);
+  }
+
+  // Initial draw
+  draw();
+
+  // Interactive toggle
+  document.getElementById("redraw-btn")?.addEventListener("click", () => {
+    const colors = ["#ef4444", "#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
+    const fill = colors[Math.floor(Math.random() * colors.length)];
+    const stroke = colors[Math.floor(Math.random() * colors.length)];
+    draw(fill, stroke);
+  });
+</script>
+
+<style>
+  .demo-box {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    background: #0f172a;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+
+  .demo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+
+  button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  canvas {
+    display: block;
+    margin: 0 auto;
+    background: transparent;
+  }
+</style>
