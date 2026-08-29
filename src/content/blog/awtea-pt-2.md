@@ -78,8 +78,8 @@ wasn't just `fillRect` / `drawRect` - clipping regions mapped onto `ctx.clip`,
 affine transforms mapped onto `ctx.setTransform()` - heck, even `drawImage()`
 has a near equivalent in Canvas2D's `ctx.drawImage()`. For a while adding
 support for a new `Graphics` method was less "design a rendering strategy" and
-more "look up the Canvas2D equivalant and wire it through". Sure there were some
-small quirks, like needing to set both the fill style, and stroke style in every
+more "look up the Canvas2D equivalent and wire it through". Sure there were some
+small quirks, like needing to set both the fill style and stroke style in every
 `setColor()` call:
 
 ```java
@@ -105,7 +105,7 @@ public abstract class Canvas2DGraphics extends Graphics {
 ```
 
 However these were relatively small, and easy enough to get working. This was
-the point where things started to feel finished. rectangles were on screen, text
+the point where things started to feel finished. Rectangles were on screen, text
 was drawn, images were showing up, and some layouts even functioned. Applets
 that hadn't run in a browser in over a decade were suddenly rendering
 pixel-for-pixel, more or less how they used to. It felt like the hard part was
