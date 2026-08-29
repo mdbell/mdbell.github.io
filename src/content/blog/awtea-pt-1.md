@@ -208,7 +208,7 @@ I just... chose not to. There _shouldn't_ be any real code out there relying on
 the peer classes directly, unless they're doing some really really fun code; so
 we don't need to either. We only need to model the **public** interface that
 external code would use. `setVisible()`, `setLabel()`, `getLabel()`,
-`addActionListener()`, etc. Everything under the hood is fair game.
+`addAPctionListener()`, etc. Everything under the hood is fair game.
 
 That's the general strategy anyway - model the public contract, throw away
 everything Sun assumed about native peers, and build something that actually
