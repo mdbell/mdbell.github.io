@@ -1,0 +1,69 @@
+/* --- EMBEDS (remark-embed: YouTube, Vimeo, self-hosted clips) ---
+   One shell for every provider. The plugin emits
+
+     <figure class="embed embed--youtube">
+       <div class="embed__frame" style="--embed-aspect: 16 / 9">
+         <iframe|video ...>
+       </div>
+       <figcaption class="embed__caption">...</figcaption>   (optional)
+     </figure>
+
+   so the ratio is the only per-embed variable and providers never carry
+   their own layout. Sizing is done with aspect-ratio on the frame rather
+   than the old padding-top percentage trick, which means the child can
+   just fill it with height: 100% and captions sit in normal flow. */
+
+.embed {
+  /* <figure> ships with a 40px horizontal margin in every browser. */
+  margin: 2rem 0;
+}
+
+.embed__frame {
+  aspect-ratio: var(--embed-aspect, 16 / 9);
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  /* Fills the frame before a lazy iframe resolves, so the page doesn't
+     flash a white box on a dark background. */
+  background: rgb(var(--gray-light));
+  box-shadow: var(--box-shadow);
+
+  > iframe,
+  > video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  > video {
+    /* Letterbox rather than crop when the clip's own ratio disagrees with
+       the frame's - a cropped screen recording loses the thing it was
+       recorded to show. */
+    object-fit: contain;
+    background: #000;
+  }
+}
+
+/* {ratio="auto"} - let the media size itself, for clips whose dimensions
+   aren't known at authoring time. */
+.embed__frame--auto {
+  aspect-ratio: auto;
+
+  > iframe,
+  > video {
+    height: auto;
+  }
+}
+
+.embed__caption {
+  margin-top: 0.6rem;
+  color: rgb(var(--gray));
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
+
+  a {
+    color: var(--accent);
+  }
+}

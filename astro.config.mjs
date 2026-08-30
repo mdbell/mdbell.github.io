@@ -10,6 +10,7 @@ import remarkDirective from "remark-directive";
 
 import { remarkCanvasDemo } from "./src/plugins/remark-canvas-demo.mjs";
 import { remarkTabs } from "./src/plugins/remark-tabs.mjs";
+import { remarkEmbed } from "./src/plugins/remark-embed.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -53,6 +54,7 @@ export default defineConfig({
 				remarkGithubBlockquoteAlerts,
 				remarkCanvasDemo,
 				remarkTabs,
+				remarkEmbed,
 			],
 		}),
 	},
