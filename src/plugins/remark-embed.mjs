@@ -1,7 +1,7 @@
 import { visit, SKIP } from "unist-util-visit";
 import { toString as mdastToString } from "mdast-util-to-string";
 
-import { embedProviders } from "./embed-providers.mjs";
+import { embedProviders } from "./embeds/index.mjs";
 
 /**
  * remarkEmbed
@@ -50,10 +50,10 @@ import { embedProviders } from "./embed-providers.mjs";
  * Extending
  * ---------------------------------------------------------------------
  *
- * Add an entry to embed-providers.mjs. Nothing in this file knows what
- * YouTube is; it only knows how to resolve a provider, turn a URL into
- * params, and wrap whatever element the provider returns. See that file's
- * header for the provider contract.
+ * Add a file to src/plugins/embeds/ and list it in that directory's
+ * index.mjs. Nothing in this file knows what YouTube is; it only knows how
+ * to resolve a provider, turn a URL into params, and wrap whatever element
+ * the provider returns. See embeds/index.mjs for the provider contract.
  *
  * ---------------------------------------------------------------------
  * Why leaf directives specifically
@@ -94,13 +94,13 @@ const registry = new Map();
 for (const provider of embedProviders) {
   if (!provider?.name || typeof provider.build !== "function") {
     throw new Error(
-      `[remarkEmbed] invalid provider in embed-providers.mjs: every provider needs a "name" and a "build" function (got ${JSON.stringify(provider?.name)}).`,
+      `[remarkEmbed] invalid provider listed in src/plugins/embeds/index.mjs: every provider needs a "name" and a "build" function (got ${JSON.stringify(provider?.name)}).`,
     );
   }
   for (const key of [provider.name, ...(provider.aliases || [])]) {
     if (registry.has(key)) {
       throw new Error(
-        `[remarkEmbed] duplicate provider name/alias "${key}" in embed-providers.mjs - "${registry.get(key).name}" and "${provider.name}" both claim it.`,
+        `[remarkEmbed] duplicate provider name/alias "${key}" in src/plugins/embeds/ - "${registry.get(key).name}" and "${provider.name}" both claim it.`,
       );
     }
     registry.set(key, provider);
@@ -108,7 +108,7 @@ for (const provider of embedProviders) {
 }
 if (registry.has(GENERIC_NAME)) {
   throw new Error(
-    `[remarkEmbed] a provider claims the reserved name "${GENERIC_NAME}", which is the generic URL-dispatch directive. Rename it in embed-providers.mjs.`,
+    `[remarkEmbed] a provider claims the reserved name "${GENERIC_NAME}", which is the generic URL-dispatch directive. Rename it in src/plugins/embeds/.`,
   );
 }
 
@@ -192,7 +192,7 @@ export function remarkEmbed() {
           provider = registry.get(attributes.provider);
           if (!provider) {
             file.fail(
-              `Unknown embed provider "${attributes.provider}". Known providers: ${knownNames()}. Add a new one in src/plugins/embed-providers.mjs.`,
+              `Unknown embed provider "${attributes.provider}". Known providers: ${knownNames()}. Add a new one in src/plugins/embeds/.`,
               node,
             );
             return;
@@ -201,7 +201,7 @@ export function remarkEmbed() {
           provider = providerForUrl(attributes.url);
           if (!provider) {
             file.fail(
-              `No embed provider recognises the URL "${attributes.url}". Known providers: ${knownNames()}. Either use the provider directive directly (e.g. \`::youtube{id="..."}\`) or add a matcher in src/plugins/embed-providers.mjs.`,
+              `No embed provider recognises the URL "${attributes.url}". Known providers: ${knownNames()}. Either use the provider directive directly (e.g. \`::youtube{id="..."}\`) or add a matcher in src/plugins/embeds/.`,
               node,
             );
             return;
