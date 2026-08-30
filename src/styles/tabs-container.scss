@@ -1,12 +1,12 @@
 @use "tabs-shared" as tabs;
 
 /* --- TABS CONTAINER (remark-directive tabs, e.g. screenshot comparisons) ---
-   Shares the same tab-buttons/tab-btn header styling and switchTab JS
-   contract as .code-demo-tabs (via the shared mixins in _tabs-shared.scss),
-   but sized for arbitrary prose/image content rather than a fixed-height
-   code+canvas pairing: no locked height, and panels get real padding
-   since content sits directly in them rather than inside a
-   further-padded .canvas-wrapper. */
+   Shares the same tab-buttons/tab-btn header styling (via the mixins in
+   tabs-shared.scss) and the same behaviour (src/scripts/tabs.ts) as
+   .code-demo-tabs, but is sized for arbitrary prose/image content rather
+   than a fixed-height code+canvas pairing: no locked height, and panels
+   get real padding since content sits directly in them rather than inside
+   a further-padded .canvas-wrapper. */
 
 .tabs-container {
   @include tabs.tabs-outer-shell;

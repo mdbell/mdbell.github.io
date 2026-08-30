@@ -63,13 +63,13 @@ import { toString as mdastToString } from "mdast-util-to-string";
  *   :::tab[Native AWT]{name="native-awt"}
  *
  * Reuses the same tab-switching contract as remarkCanvasDemo.js
- * (data-tab-group / data-tab-btn / data-tab-panel + the shared, guarded
- * window.switchTab), but renders into its own "tabs-container" class
- * rather than remarkCanvasDemo's "code-demo-tabs" - the two have
- * different sizing needs (this one auto-sizes to content and has
- * padding; the canvas demo uses a fixed height suited to a code editor +
- * rendered canvas side by side), so they share behavior but not layout.
- * See tabs-container.css for the matching styles.
+ * (data-tab-group / data-tab-btn / data-tab-panel, driven by the
+ * delegated listeners in src/scripts/tabs.ts), but renders into its own
+ * "tabs-container" class rather than remarkCanvasDemo's "code-demo-tabs" -
+ * the two have different sizing needs (this one auto-sizes to content and
+ * has padding; the canvas demo pairs a code editor with a rendered
+ * canvas), so they share behavior but not layout. See
+ * src/styles/tabs-container.scss for the matching styles.
  */
 export function remarkTabs() {
   return (tree, file) => {
@@ -149,6 +149,9 @@ export function remarkTabs() {
 
         const isActive = i === 0;
 
+        // Markup only - the click/keyboard behaviour lives in
+        // src/scripts/tabs.ts, which drives every tab widget on the site
+        // off these data attributes.
         buttons.push({
           type: "paragraph",
           data: {
@@ -156,8 +159,13 @@ export function remarkTabs() {
             hProperties: {
               className: isActive ? "tab-btn active" : "tab-btn",
               type: "button",
-              "data-tab-btn": true,
-              onclick: `switchTab(this, '${key}')`,
+              role: "tab",
+              "data-tab-btn": key,
+              "aria-selected": isActive ? "true" : "false",
+              "aria-controls": `${groupId}-panel-${key}`,
+              // Roving tabindex: Tab reaches the tablist, then arrow keys
+              // move within it.
+              tabindex: isActive ? "0" : "-1",
             },
           },
           children: [{ type: "text", value: label }],
@@ -169,6 +177,8 @@ export function remarkTabs() {
             hName: "div",
             hProperties: {
               className: isActive ? "tab-content active" : "tab-content",
+              role: "tabpanel",
+              id: `${groupId}-panel-${key}`,
               "data-tab-panel": key,
             },
           },
@@ -180,7 +190,7 @@ export function remarkTabs() {
         type: "paragraph",
         data: {
           hName: "div",
-          hProperties: { className: "tab-buttons" },
+          hProperties: { className: "tab-buttons", role: "tablist" },
         },
         children: buttons,
       };

@@ -43,4 +43,12 @@
     color: var(--accent);
     background: rgba(245, 158, 11, 0.15);
   }
+
+  // Only the active tab is in the tab order (roving tabindex in
+  // src/scripts/tabs.ts), so arrow-key navigation between tabs needs a
+  // visible focus ring to be followable.
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
 }

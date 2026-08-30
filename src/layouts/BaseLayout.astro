@@ -53,6 +53,12 @@ const { title, description, postId } = Astro.props;
 </style>
 
 <script>
+  // Tab switching for ::::tabs blocks and live canvas demos. Delegated from
+  // `document`, so it covers widgets rendered anywhere on the page.
+  import '../scripts/tabs';
+</script>
+
+<script>
   function attachCopyButtons() {
     // Select all code blocks rendered by Astro/Shiki/Prism
     const codeBlocks = document.querySelectorAll('pre');

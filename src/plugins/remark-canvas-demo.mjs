@@ -21,16 +21,22 @@ import { visit } from "unist-util-visit";
  *  2. The injected code is escaped for `</script>` so a stray literal
  *     "</script>" inside a snippet (e.g. in a comment or string) can't
  *     terminate the injected <script> tag early and corrupt the page.
- *  3. Tab switching now uses generic data-attributes (data-tab-group /
- *     data-tab-btn / data-tab-panel) and a single shared window.switchTab,
- *     instead of bespoke class names + a canvas-specific function. This is
- *     the same mechanism a future tabbed-screenshot-comparison plugin can
- *     reuse without duplicating CSS/JS.
- *  4. See the NOTE at the bottom re: Astro View Transitions - if the site
- *     uses client-side navigation, the inline <script> execution strategy
- *     here may need to move to an astro:page-load listener. This can't be
- *     fixed blind without knowing the site's routing config, so it's left
- *     as a call-out rather than a silent behavior change.
+ *  3. Tab switching uses generic data-attributes (data-tab-group /
+ *     data-tab-btn / data-tab-panel) rather than bespoke class names, so
+ *     remarkTabs reuses the exact same markup contract without duplicating
+ *     any CSS or JS.
+ *  4. The behaviour itself lives in src/scripts/tabs.ts, loaded once by
+ *     BaseLayout.astro. This plugin emits markup only - no inline onclick
+ *     handlers, and no global function that a page without a live demo
+ *     would be missing.
+ *
+ * NOTE on Astro View Transitions: the tab listeners are delegated from
+ * `document`, so they survive a client-side navigation without any
+ * re-initialisation. The inline demo snippet below is a different story -
+ * a raw <script> that has already been parsed won't re-run when it is
+ * transitioned back in. That only matters if <ClientRouter /> is added to
+ * the site (it currently isn't); the fix at that point is to wrap the
+ * snippet in an astro:page-load listener.
  */
 export function remarkCanvasDemo() {
   return (tree) => {
@@ -48,6 +54,9 @@ export function remarkCanvasDemo() {
         return;
       }
       const canvasId = idMatch[1];
+      // canvasId is required and unique per page, so it doubles as a stable
+      // id for the tab group and its panels.
+      const groupId = `canvas-demo-${canvasId}`;
 
       const rawCode = node.value || "";
       // Guard against a literal "</script>" inside the snippet (comment,
@@ -55,13 +64,15 @@ export function remarkCanvasDemo() {
       // <script> tag early.
       const safeCode = rawCode.replace(/<\/script/gi, "<\\/script");
 
-      // Header node: tab buttons
+      // Header node: tab buttons. Behaviour comes from the delegated
+      // listeners in src/scripts/tabs.ts - see the contract documented
+      // there; nothing is wired up per-instance.
       const tabHeader = {
         type: "html",
         value: `
-          <div class="tab-buttons" data-tab-btn-group>
-            <button class="tab-btn active" type="button" data-tab-btn data-tab-target="code" onclick="switchTab(this, 'code')">JavaScript</button>
-            <button class="tab-btn" type="button" data-tab-btn data-tab-target="preview" onclick="switchTab(this, 'preview')">Live Preview</button>
+          <div class="tab-buttons" role="tablist" aria-label="Code and live preview">
+            <button class="tab-btn active" type="button" role="tab" data-tab-btn="code" aria-selected="true" aria-controls="${groupId}-panel-code" tabindex="0">JavaScript</button>
+            <button class="tab-btn" type="button" role="tab" data-tab-btn="preview" aria-selected="false" aria-controls="${groupId}-panel-preview" tabindex="-1">Live Preview</button>
           </div>
         `.trim(),
       };
@@ -73,39 +84,26 @@ export function remarkCanvasDemo() {
           hName: "div",
           hProperties: {
             className: "tab-content active",
+            role: "tabpanel",
+            id: `${groupId}-panel-code`,
             "data-tab-panel": "code",
           },
         },
         children: [node],
       };
 
-      // Preview panel node (canvas + execution script)
-      // The switchTab function is defined inline here (guarded by a
-      // typeof check) so this block still works standalone with no extra
-      // setup required elsewhere. If you later add the shared
-      // `tabSwitchScript` export to your base layout, this guard means
-      // it simply won't redefine it - no conflict either way.
+      // Preview panel node (canvas + execution script). The only inline
+      // script left here is the demo snippet itself, which has to be
+      // inline because it *is* the post's content.
       const previewTabWrapper = {
         type: "html",
         value: `
-          <div class="tab-content" data-tab-panel="preview">
+          <div class="tab-content" role="tabpanel" id="${groupId}-panel-preview" data-tab-panel="preview">
             <div class="canvas-wrapper">
               <canvas id="${canvasId}" width="300" height="320"></canvas>
             </div>
           </div>
           <script>
-            if (typeof window.switchTab !== 'function') {
-              window.switchTab = function (btn, tabName) {
-                const container = btn.closest('[data-tab-group]');
-                if (!container) return;
-                container.querySelectorAll('[data-tab-btn]').forEach((b) => b.classList.remove('active'));
-                container.querySelectorAll('[data-tab-panel]').forEach((c) => c.classList.remove('active'));
-                btn.classList.add('active');
-                const panel = container.querySelector('[data-tab-panel="' + tabName + '"]');
-                if (panel) panel.classList.add('active');
-              };
-            }
-
             (() => {
               try {
 ${safeCode}
@@ -122,7 +120,10 @@ ${safeCode}
         type: "paragraph",
         data: {
           hName: "div",
-          hProperties: { className: "code-demo-tabs", "data-tab-group": true },
+          hProperties: {
+            className: "code-demo-tabs",
+            "data-tab-group": groupId,
+          },
         },
         children: [tabHeader, codeTabWrapper, previewTabWrapper],
       };
@@ -131,37 +132,3 @@ ${safeCode}
     });
   };
 }
-
-/**
- * Shared tab-switching script. Emit this ONCE globally (e.g. in your base
- * layout, or injected by the Astro integration that registers this remark
- * plugin) rather than per-instance. Both this plugin's markup and any future
- * tabbed-content plugin (e.g. a screenshot comparison widget) can drive off
- * this same function as long as they use the same data-tab-group /
- * data-tab-btn / data-tab-panel attributes.
- *
- * NOTE on Astro View Transitions: if the site has <ClientRouter /> /
- * transition:animate enabled anywhere, plain inline <script> tags injected
- * as raw HTML will generally NOT re-execute on client-side navigation
- * (browsers don't re-run scripts already present in a DOM node that's
- * transitioned in). If that's the case here, wrap the initialization in:
- *
- *   document.addEventListener('astro:page-load', () => { ... });
- *
- * instead of relying on the script tag simply being present in the page.
- * If the site does full MPA navigation between posts (no view transitions),
- * this is a non-issue and can be ignored.
- */
-export const tabSwitchScript = `
-  if (typeof window.switchTab !== 'function') {
-    window.switchTab = function (btn, tabName) {
-      const container = btn.closest('[data-tab-group]');
-      if (!container) return;
-      container.querySelectorAll('[data-tab-btn]').forEach((b) => b.classList.remove('active'));
-      container.querySelectorAll('[data-tab-panel]').forEach((c) => c.classList.remove('active'));
-      btn.classList.add('active');
-      const panel = container.querySelector('[data-tab-panel="' + tabName + '"]');
-      if (panel) panel.classList.add('active');
-    };
-  }
-`.trim();
