@@ -1,0 +1,54 @@
+@use "tabs-shared" as tabs;
+
+/* --- TABS CONTAINER (remark-directive tabs, e.g. screenshot comparisons) ---
+   Shares the same tab-buttons/tab-btn header styling and switchTab JS
+   contract as .code-demo-tabs (via the shared mixins in _tabs-shared.scss),
+   but sized for arbitrary prose/image content rather than a fixed-height
+   code+canvas pairing: no locked height, and panels get real padding
+   since content sits directly in them rather than inside a
+   further-padded .canvas-wrapper. */
+
+.tabs-container {
+  @include tabs.tabs-outer-shell;
+  display: flex;
+  flex-direction: column;
+
+  .tab-buttons {
+    @include tabs.tab-header-chrome;
+    flex-shrink: 0;
+  }
+
+  .tab-btn {
+    @include tabs.tab-btn-chrome;
+  }
+
+  /* Tab Panels - auto height, real padding around content */
+  [data-tab-panel] {
+    display: none;
+    padding: 1.25rem 1.5rem;
+    box-sizing: border-box;
+
+    &.active {
+      display: block;
+      background: #27272a;
+    }
+
+    /* Remove default top/bottom margin on the first/last child so
+       padding alone controls the spacing (avoids doubled gaps from e.g.
+       a <p> or <img>'s own margin stacking with the panel's padding). */
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 4px;
+      display: block;
+      margin: 0 auto;
+    }
+  }
+}

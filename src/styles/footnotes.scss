@@ -1,0 +1,67 @@
+/* Footnote section container */
+section[data-footnotes] {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.875rem;
+  color: var(--gray, #9ca3af);
+
+  /* Hide the screen-reader footnote heading visually.
+     NOTE: this duplicates the same visually-hidden technique as the
+     global .sr-only rule in _base.scss (slightly different property
+     values - e.g. margin: -1px here vs position:absolute + 1px box
+     there). If the footnotes plugin already applies class="sr-only" to
+     this heading, this whole block may be redundant and could likely be
+     deleted in favor of the shared .sr-only class - left as-is for now
+     since removing it without confirming the actual rendered markup
+     could change something unintentionally. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Footnote list spacing */
+  ol {
+    padding-left: 1.25rem;
+    margin: 0;
+  }
+
+  li {
+    margin-bottom: 0;
+  }
+
+  /* Scale down inline code blocks within footnotes */
+  code {
+    font-size: 0.8em;
+    padding: 0.15em 0.35em;
+  }
+}
+
+/* Back-link arrow symbol (↩) */
+.data-footnote-backref {
+  font-family: sans-serif;
+  text-decoration: none;
+  color: var(--info-text, #3b82f6);
+  margin-left: 0.25rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Prevent sticky header from overlapping footnote back-reference targets */
+[id^="user-content-fnref-"],
+[id^="user-content-fn-"] {
+  scroll-margin-top: 5rem;
+}
+
+:target {
+  scroll-margin-top: 5rem;
+}

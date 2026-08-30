@@ -6,8 +6,10 @@ import { defineConfig, fontProviders } from "astro/config";
 import { unified } from "@astrojs/markdown-remark";
 import remarkGithubBlockquoteAlerts from "remark-github-blockquote-alert";
 import mermaid from "astro-mermaid";
+import remarkDirective from "remark-directive";
 
 import { remarkCanvasDemo } from "./src/plugins/remark-canvas-demo.mjs";
+import { remarkTabs } from "./src/plugins/remark-tabs.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -46,7 +48,12 @@ export default defineConfig({
 	],
 	markdown: {
 		processor: unified({
-			remarkPlugins: [remarkGithubBlockquoteAlerts, remarkCanvasDemo],
+			remarkPlugins: [
+				remarkDirective,
+				remarkGithubBlockquoteAlerts,
+				remarkCanvasDemo,
+				remarkTabs,
+			],
 		}),
 	},
 });

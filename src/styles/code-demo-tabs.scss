@@ -1,0 +1,87 @@
+@use "tabs-shared" as tabs;
+
+/* --- CODE DEMO TABS (Canvas Integration) --- */
+
+.code-demo-tabs {
+  @include tabs.tabs-outer-shell;
+  display: grid;
+  grid-template-rows: auto 1fr; /* header row (auto height), content row */
+  grid-template-columns: 100%;
+
+  .tab-buttons {
+    @include tabs.tab-header-chrome;
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .tab-btn {
+    @include tabs.tab-btn-chrome;
+  }
+
+  /* Tab Panels - CSS Grid stacking trick.
+     Both panels are placed in the SAME grid cell (row 2 / col 1). Grid
+     track sizing accounts for every item placed in a track, even ones
+     that are visually hidden via visibility:hidden (unlike display:none,
+     which removes an item from sizing entirely) - so the shared row
+     auto-sizes to whichever panel is TALLEST, all the time, regardless
+     of which one is currently "active". Switching tabs just toggles
+     which panel is visible; the container's height never has to change,
+     so there's no jump/resize and no need to guess a fixed pixel value
+     that fits every case. */
+  [data-tab-panel] {
+    grid-row: 2;
+    grid-column: 1;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    box-sizing: border-box;
+    min-width: 0; /* avoid a hidden wide panel (e.g. long code line) stretching the grid column */
+
+    &.active {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      background: #27272a;
+    }
+  }
+
+  /* Inner Code Block Alignment
+     No longer forced to height:100%/overflow:auto against a fixed-height
+     parent - the code block now sizes to its natural content height
+     (which is also what the grid uses to size the shared row). If a
+     single snippet ever gets excessively long and you want to cap it,
+     add a max-height + overflow:auto here instead of a height - that
+     bounds one panel without reintroducing a hardcoded total-container
+     height. */
+  [data-tab-panel="code"] {
+    > pre,
+    > .expressive-code {
+      margin: 0 !important;
+      border: none !important;
+      border-radius: 0 !important;
+      background-color: transparent !important;
+      box-sizing: border-box;
+    }
+  }
+
+  /* Canvas Wrapper */
+  .canvas-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: transparent;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  canvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+}

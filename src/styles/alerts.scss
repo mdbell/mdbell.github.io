@@ -1,0 +1,94 @@
+/* Container reset & centering wrapper */
+.markdown-alert {
+  width: fit-content;
+  max-width: 100%;
+  margin: 1.5rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.9rem;
+  text-align: center;
+  box-sizing: border-box;
+
+  /* Ensure paragraph inside alert has no default margins */
+  p {
+    margin: 0;
+    display: inline;
+  }
+}
+
+/* Badge styling to match .alert-badge */
+.markdown-alert-title {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  text-transform: uppercase;
+  line-height: 1;
+  flex-shrink: 0;
+  margin: 0;
+
+  /* Hide default SVG icons from remark plugin to keep clean text badge look */
+  octicon,
+  svg {
+    display: none;
+  }
+}
+
+/* --- INFO / NOTE --- */
+.markdown-alert-note,
+.markdown-alert-info {
+  background-color: var(--info-bg, rgba(59, 130, 246, 0.1));
+  border-color: var(--info-border, rgba(59, 130, 246, 0.3));
+  color: var(--info-text, #bfdbfe);
+
+  .markdown-alert-title {
+    background-color: var(--info-badge-bg, #3b82f6);
+    color: var(--info-badge-text, #ffffff);
+  }
+}
+
+/* --- WARNING / CAUTION --- */
+.markdown-alert-warning,
+.markdown-alert-caution {
+  background-color: var(--warn-bg, rgba(245, 158, 11, 0.1));
+  border-color: var(--warn-border, rgba(245, 158, 11, 0.3));
+  color: var(--warn-text, #fef08a);
+
+  .markdown-alert-title {
+    background-color: var(--warn-badge-bg, #f59e0b);
+    color: var(--warn-badge-text, #000000);
+  }
+}
+
+/* --- ERROR / IMPORTANT --- */
+.markdown-alert-important {
+  background-color: var(--error-bg, rgba(239, 68, 68, 0.1));
+  border-color: var(--error-border, rgba(239, 68, 68, 0.3));
+  color: var(--error-text, #fca5a5);
+
+  .markdown-alert-title {
+    background-color: var(--error-badge-bg, #ef4444);
+    color: var(--error-badge-text, #ffffff);
+  }
+}
+
+/* --- SUCCESS / TIP --- */
+.markdown-alert-tip {
+  background-color: var(--success-bg, rgba(34, 197, 94, 0.1));
+  border-color: var(--success-border, rgba(34, 197, 94, 0.3));
+  color: var(--success-text, #86efac);
+
+  .markdown-alert-title {
+    background-color: var(--success-badge-bg, #22c55e);
+    color: var(--success-badge-text, #000000);
+  }
+}
