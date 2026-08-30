@@ -78,9 +78,14 @@ wasn't just `fillRect` / `drawRect` - clipping regions mapped onto `ctx.clip`,
 affine transforms mapped onto `ctx.setTransform()` - heck, even `drawImage()`
 has a near equivalent in Canvas2D's `ctx.drawImage()`. For a while adding
 support for a new `Graphics` method was less "design a rendering strategy" and
-more "look up the Canvas2D equivalent and wire it through". Sure there were some
-small quirks, like needing to set both the fill style and stroke style in every
-`setColor()` call:
+more "look up the Canvas2D equivalent and wire it through". An
+Example[^color-example]:
+
+[^color-example]:
+    There are some assumptions made by AWT that are different from
+    Canvas2D. In this case, AWT has a single `setColor()` that handles both
+    stroke (`draw*()`) and fill (`fill*()`) colors, meanwhile they're seperate
+    operations for Canvas2D
 
 ```java
 public abstract class Canvas2DGraphics extends Graphics {
